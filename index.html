@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Behavioral Feelings Wheel Tally</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#573a96">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Feelings">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script>tailwind.config={darkMode:"media"}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.24.7/babel.min.js"></script>
+<style>.seg path{cursor:pointer;transition:filter .12s}.seg:hover path{filter:brightness(1.18)}.seg:focus-visible path{filter:brightness(1.3)}.seg:focus{outline:none}.seg text{pointer-events:none}</style>
+</head>
+<body class="bg-stone-100 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100 text-[15px]" style="padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)">
+<div id="root"></div>
+<script type="text/babel" data-presets="react">
+const {useState,useEffect,useMemo}=React;
+const KEY="feelings-tally",CX=500,CY=500;
+const DATA=[
+["Fearful","#0e8f9b",[["Scared","Terrified","Frightened"],["Anxious","Overwhelmed","Worried"],["Insecure","Inadequate","Inferior"],["Weak","Worthless","Insignificant"],["Rejected","Excluded","Persecuted"],["Threatened","Nervous","Exposed"]],["Prepare","Seek support","Plan","Be cautious","Reduce risk","Ground yourself","Breathe"]],
+["Angry","#573a96",[["Let down","Betrayed","Resentful"],["Humiliated","Disrespected","Ridiculed"],["Bitter","Indignant","Violated"],["Mad","Furious","Jealous"],["Aggressive","Provoked","Hostile"],["Frustrated","Infuriated","Annoyed"],["Distant","Withdrawn","Numb"],["Critical","Skeptical","Dismissive"]],["Set boundaries","Confront","Speak up","Express needs","Walk away","Channel energy","Problem-solve","Get space","Redirect attention","Practice patience"]],
+["Disgusted","#a93ea4",[["Disapproving","Judgmental","Embarrassed"],["Disappointed","Appalled","Revolted"],["Awful","Nauseated","Detestable"],["Repelled","Horrified","Hesitant"]],["Avoid","Keep distance","Cleanse","Let go","Speak honestly","Reframe","Focus on solutions","Choose differently"]],
+["Sad","#d63c58",[["Hurt","Embarrassed","Disappointed"],["Depressed","Inferior","Empty"],["Guilty","Remorseful","Ashamed"],["Despair","Powerless","Grief"],["Vulnerable","Fragile","Victimized"],["Lonely","Abandoned","Isolated"]],["Find kindness","Be heard","Find others","Prioritize rest","Practice self-care","Find meaning","Focus on health","Ask for help","Express feelings","Seek comfort","Reach out"]],
+["Happy","#e55f14",[["Optimistic","Inspired","Hopeful"],["Trusting","Intimate","Sensitive"],["Peaceful","Thankful","Loving"],["Powerful","Creative","Courageous"],["Accepted","Valued","Respected"],["Proud","Confident","Successful"],["Interested","Inquisitive","Curious"],["Content","Joyful","Free"],["Playful","Cheeky","Aroused"]],["Enjoy the moment","Take initiative","Pursue goals","Spread positivity","Show gratitude","Help others","Learn","Explore","Be active"]],
+["Surprised","#e1900d",[["Excited","Energetic","Eager"],["Amazed","Awe","Astounded"],["Confused","Perplexed","Disillusioned"],["Startled","Dismayed","Shocked"]],["Create","Connect","Celebrate","Stay curious"]],
+["Bad","#27a653",[["Bored","Indifferent","Apathetic"],["Busy","Pressured","Rushed"],["Stressed","Overwhelmed","Out of control"],["Tired","Sleepy","Unfocused"]],["Rest","Refocus","Recenter","Seek clarity","Let go"]]
+];
+const RINGS=[[60,150],[150,260],[260,370],[370,495]],OPS=[1,.86,.74,.95],FS=[17,13.5,12.5,12.5];
+const pt=(r,a)=>[(CX+r*Math.sin(a)).toFixed(1),(CY-r*Math.cos(a)).toFixed(1)];
+
+// Build every wheel segment once.
+const SEGS=[],META={};
+(()=>{
+  const leaves=DATA.reduce((n,c)=>n+c[2].reduce((m,x)=>m+x.length-1,0),0),u=2*Math.PI/leaves;
+  let a=0;
+  const add=(id,label,core,color,ring,a0,a1)=>{SEGS.push({id,label,core,color,ring,a0,a1});META[id]={label,core,color,kind:ring===3?"action":"feeling"}};
+  for(const [core,color,mids,acts] of DATA){
+    const cs=a;
+    for(const m of mids){
+      const ms=a;
+      for(let i=1;i<m.length;i++){add(core+">"+m[0]+">"+m[i],m[i],core,color,2,a,a+u);a+=u}
+      add(core+">"+m[0],m[0],core,color,1,ms,a);
+    }
+    const w=(a-cs)/acts.length;
+    acts.forEach((x,i)=>add(core+"!"+x,x,core,color,3,cs+i*w,cs+(i+1)*w));
+    add(core,core,core,color,0,cs,a);
+  }
+})();
+
+function Segment({s,count,onTap}){
+  const [r0,r1]=RINGS[s.ring],lg=s.a1-s.a0>Math.PI?1:0,am=(s.a0+s.a1)/2,deg=am*180/Math.PI,flip=deg>180,rm=(r0+r1)/2;
+  const [bx,by]=pt(r1-13,am),on=count>0;
+  const d=`M${pt(r1,s.a0)} A${r1},${r1} 0 ${lg} 1 ${pt(r1,s.a1)} L${pt(r0,s.a1)} A${r0},${r0} 0 ${lg} 0 ${pt(r0,s.a0)} Z`;
+  return (
+    <g className="seg" tabIndex={0} role="button" aria-label={`${s.label} (${s.core})`} onClick={()=>onTap(s.id)}
+       onKeyDown={e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();onTap(s.id)}}}>
+      <title>{s.label} · {s.core}</title>
+      <path d={d} fill={s.color} fillOpacity={OPS[s.ring]} strokeWidth={on?3:1.5}
+        className={on?"stroke-zinc-900 dark:stroke-white":"stroke-stone-100 dark:stroke-zinc-900"}/>
+      <text x={flip?-rm:rm} y={0} textAnchor="middle" dominantBaseline="central" fontSize={FS[s.ring]}
+        fontWeight={s.ring===0?700:500} fill="#fff" transform={`translate(${CX} ${CY}) rotate(${flip?deg+90:deg-90})`}>{s.label}</text>
+      {on&&<g pointerEvents="none">
+        <circle cx={bx} cy={by} r="11" className="fill-zinc-900 dark:fill-white"/>
+        <text x={bx} y={by} textAnchor="middle" dominantBaseline="central" fontSize="12" fontWeight="700" className="fill-white dark:fill-zinc-900">{count>99?"99+":count}</text>
+      </g>}
+    </g>
+  );
+}
+
+const Card=({title,children})=>(
+  <section className="rounded-2xl border border-stone-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 mb-4">
+    {title&&<h2 className="text-[15px] font-semibold mb-3">{title}</h2>}{children}
+  </section>
+);
+const Dot=({c})=><span className="w-2.5 h-2.5 rounded-full shrink-0" style={{background:c}}/>;
+const Empty=({children})=><p className="text-sm text-zinc-500 dark:text-zinc-400">{children}</p>;
+const btn="px-3 py-1.5 rounded-lg border border-stone-200 dark:border-zinc-700 bg-stone-100 dark:bg-zinc-800 hover:border-zinc-400 disabled:opacity-40 disabled:cursor-default";
+
+function App(){
+  const [S,setS]=useState(()=>{try{const p=JSON.parse(localStorage.getItem(KEY));if(p&&p.counts&&p.history)return p}catch(e){}return{counts:{},history:[]}});
+  const [filter,setFilter]=useState("all");
+  const [armed,setArmed]=useState(false);
+  useEffect(()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}},[S]);
+  useEffect(()=>{if(!armed)return;const t=setTimeout(()=>setArmed(false),3000);return()=>clearTimeout(t)},[armed]);
+
+  const tap=id=>setS(s=>({counts:{...s.counts,[id]:(s.counts[id]||0)+1},history:[...s.history,id]}));
+  const undo=()=>setS(s=>{
+    if(!s.history.length)return s;
+    const id=s.history[s.history.length-1],c={...s.counts};c[id]--;if(!c[id])delete c[id];
+    return{counts:c,history:s.history.slice(0,-1)};
+  });
+  const reset=()=>{if(armed){setS({counts:{},history:[]});setArmed(false)}else setArmed(true)};
+
+  const total=S.history.length,ids=Object.keys(S.counts);
+  const fam=useMemo(()=>{const f={};DATA.forEach(d=>f[d[0]]=0);ids.forEach(i=>f[META[i].core]+=S.counts[i]);return f},[S]);
+  const max=Math.max(1,...Object.values(fam)),top=Object.entries(fam).sort((a,b)=>b[1]-a[1])[0];
+  const list=ids.filter(i=>filter==="all"||META[i].kind===filter)
+    .sort((a,b)=>S.counts[b]-S.counts[a]||META[a].label.localeCompare(META[b].label)).slice(0,10);
+  const recent=S.history.slice(-6).reverse();
+
+  return (
+    <div className="max-w-[1280px] mx-auto p-3 md:p-5 grid gap-5 md:grid-cols-[1.25fr_1fr] items-start">
+      <section className="rounded-2xl border border-stone-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-3.5 md:sticky md:top-3">
+        <h1 className="text-[22px] font-bold">Behavioral Feelings Wheel Tally</h1>
+        <p className="text-zinc-500 dark:text-zinc-400 mb-3">Tap any feeling or action on the wheel to add it to your tally.</p>
+        <svg viewBox="0 0 1000 1000" className="w-full h-auto block" role="img" aria-label="Behavioral feelings wheel">
+          {SEGS.map(s=><Segment key={s.id} s={s} count={S.counts[s.id]||0} onTap={tap}/>)}
+        </svg>
+      </section>
+
+      <aside>
+        <Card>
+          <div className="grid grid-cols-3 gap-2.5">
+            {[[total,"Total taps"],[ids.length,"Different words"],[top[1]?top[0]:"—","Top feeling family"]].map(([v,l])=>(
+              <div key={l}><b className="block text-2xl leading-tight">{v}</b><span className="text-[13px] text-zinc-500 dark:text-zinc-400">{l}</span></div>
+            ))}
+          </div>
+        </Card>
+
+        <Card title="Taps by feeling family">
+          {DATA.map(d=>(
+            <div key={d[0]} className="grid grid-cols-[84px_1fr_34px] gap-2 items-center my-1.5 text-sm">
+              <span>{d[0]}</span>
+              <div className="h-3 rounded-md bg-stone-200 dark:bg-zinc-800 overflow-hidden">
+                <div className="h-full rounded-md transition-all" style={{width:fam[d[0]]/max*100+"%",background:d[1]}}/>
+              </div>
+              <span className="text-right font-semibold tabular-nums">{fam[d[0]]}</span>
+            </div>
+          ))}
+        </Card>
+
+        <Card title="Most tapped words">
+          <div className="flex gap-1.5 mb-2.5">
+            {[["all","All"],["feeling","Feelings"],["action","Actions"]].map(([k,l])=>(
+              <button key={k} aria-pressed={filter===k} onClick={()=>setFilter(k)}
+                className={btn+(filter===k?" !bg-zinc-900 !text-white dark:!bg-white dark:!text-zinc-900":"")}>{l}</button>
+            ))}
+          </div>
+          {list.length?list.map(i=>(
+            <div key={i} className="flex items-center gap-2 py-1.5 border-b last:border-0 border-stone-200 dark:border-zinc-800 text-sm">
+              <Dot c={META[i].color}/>
+              <span className="flex-1">{META[i].label} <small className="text-zinc-500 dark:text-zinc-400">{META[i].core}{META[i].kind==="action"?" action":""}</small></span>
+              <b>{S.counts[i]}</b>
+            </div>
+          )):<Empty>Nothing tapped yet. Pick a word on the wheel to begin.</Empty>}
+        </Card>
+
+        <Card title="Recent taps">
+          {recent.length?recent.map((i,n)=>(
+            <div key={n} className="flex items-center gap-2 py-1.5 border-b last:border-0 border-stone-200 dark:border-zinc-800 text-sm">
+              <Dot c={META[i].color}/><span className="flex-1">{META[i].label}</span>
+              <small className="text-zinc-500 dark:text-zinc-400">{META[i].core}</small>
+            </div>
+          )):<Empty>Your latest taps will show up here.</Empty>}
+          <div className="flex gap-2 mt-3">
+            <button className={btn} onClick={undo} disabled={!total}>Undo last</button>
+            <button className={btn} onClick={reset} disabled={!total}>{armed?"Tap again to confirm":"Reset all"}</button>
+          </div>
+        </Card>
+      </aside>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+<script>
+if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js").catch(()=>{})})}
+</script>
+</body>
+</html>
