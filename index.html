@@ -35,7 +35,7 @@
       --focus: #B9A6FF;
     }
   }
-  html { scroll-padding-top: env(safe-area-inset-top, 0px); background: var(--bar); }
+  html { scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 56px); background: var(--bar); }
   *, *::before, *::after { box-sizing: border-box; }
   body {
     margin: 0;
@@ -46,10 +46,15 @@
     line-height: 1.45;
     -webkit-text-size-adjust: 100%;
   }
+  /* Keeps the status-bar area filled when the tally bar sticks to the top */
+  body::before {
+    content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
+    background: var(--bar); z-index: 20;
+  }
   header {
     background: var(--bar);
     color: var(--bar-ink);
-    padding: 14px max(16px, env(safe-area-inset-left, 0px)) 14px max(16px, env(safe-area-inset-right, 0px));
+    padding: 14px max(16px, env(safe-area-inset-right, 0px)) 10px max(16px, env(safe-area-inset-left, 0px));
     display: flex;
     align-items: center;
     gap: 12px;
@@ -60,6 +65,21 @@
   header .grow { flex: 1; min-width: 0; }
   button { font: inherit; color: inherit; cursor: pointer; }
   :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+  /* Sticky tally bar */
+  #statbar {
+    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10;
+    background: var(--bar); color: var(--bar-ink);
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    padding: 8px max(16px, env(safe-area-inset-right, 0px)) 8px max(16px, env(safe-area-inset-left, 0px));
+    border-top: 1px solid rgba(255,255,255,0.12);
+    font-size: 0.92rem;
+  }
+  #statbar strong { font-size: 1.05rem; font-variant-numeric: tabular-nums; }
+  #statbar button {
+    background: #fff; color: #14122B; border: 0; border-radius: 999px;
+    padding: 7px 14px; font-weight: 700; font-size: 0.85rem; min-height: 36px;
+  }
 
   #install {
     display: none;
@@ -73,13 +93,25 @@
   }
 
   main { max-width: 820px; margin: 0 auto; padding: 14px 12px 40px; }
-  .tools { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 2px 4px 8px; color: var(--muted); font-size: 0.9rem; }
-  .zoom { display: flex; gap: 6px; }
-  .zoom button {
-    width: 40px; height: 40px; border-radius: 12px; border: 1px solid var(--line);
-    background: var(--surface); font-size: 1.2rem; font-weight: 700; line-height: 1;
+
+  /* Ring key */
+  .ringkey { list-style: none; display: flex; flex-wrap: wrap; gap: 6px 4px; margin: 2px 4px 10px; padding: 0; font-size: 0.82rem; }
+  .ringkey li { display: flex; align-items: center; gap: 6px; padding: 5px 10px 5px 6px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); }
+  .ringkey li b { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--line); font-size: 0.72rem; }
+  .ringkey li.now { box-shadow: 0 0 0 2px var(--focus); }
+  .ringkey li.act { background: var(--ink); color: var(--bg); border-color: var(--ink); font-weight: 700; }
+  .ringkey li.act b { background: var(--bg); color: var(--ink); }
+
+  /* First-visit hint */
+  #hint { display: none; align-items: center; gap: 12px; margin: 0 4px 10px; padding: 10px 12px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); border-left: 5px solid var(--ink); font-size: 0.9rem; }
+  #hint p { margin: 0; flex: 1; }
+  #hint button { border: 1px solid var(--line); background: var(--bg); border-radius: 999px; padding: 8px 14px; font-weight: 700; font-size: 0.85rem; min-height: 40px; }
+
+  .tools { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 2px 4px 8px; min-height: 40px; color: var(--muted); font-size: 0.9rem; }
+  #backBtn {
+    display: none; border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+    border-radius: 999px; padding: 8px 14px; font-weight: 700; font-size: 0.88rem; min-height: 40px;
   }
-  .zoom button:disabled { opacity: 0.35; cursor: default; }
 
   #stage {
     overflow: auto;
@@ -87,17 +119,20 @@
     background: var(--surface);
     border: 1px solid var(--line);
     max-height: 82vh;
+    scroll-margin-top: 64px;
     -webkit-overflow-scrolling: touch;
   }
   #wheel { display: block; width: 100%; height: auto; margin: 0 auto; touch-action: manipulation; }
-  .seg { cursor: pointer; transition: opacity 0.2s; }
+  .seg { cursor: default; transition: opacity 0.25s; }
+  .seg.active { cursor: pointer; }
   .seg path { stroke: #fff; stroke-width: 1.4; transition: stroke-width 0.2s; }
-  .seg text { fill: #fff; stroke: rgba(0,0,0,0.22); stroke-width: 0.5px; paint-order: stroke; pointer-events: none; font-weight: 500; }
+  .seg text { fill: #111; pointer-events: none; font-weight: 500; }
   .seg.core text { font-weight: 800; }
-  .seg.dim { opacity: 0.22; }
-  .seg.soft { opacity: 0.6; }
-  .seg.on path { stroke-width: 4; }
+  .seg.faded { opacity: 0.5; }
+  .seg.dim { opacity: 0.2; }
+  .seg.active { opacity: 1; }
   .seg.on { opacity: 1; }
+  .seg.on path { stroke-width: 4; }
   @media (prefers-color-scheme: dark) { .seg path { stroke: #1B1936; } .seg.on path { stroke: #fff; } }
 
   #card {
@@ -108,16 +143,57 @@
   #card h2 { margin: 0 0 4px; font-size: 1.55rem; line-height: 1.15; }
   #card .lead { margin: 0 0 12px; color: var(--muted); font-size: 0.95rem; }
   #card h3 { margin: 14px 0 8px; font-size: 0.95rem; color: var(--muted); font-weight: 600; }
+  .badge { display: inline-block; margin: 0 0 6px; padding: 3px 10px; border-radius: 999px; background: var(--ink); color: var(--bg); font-size: 0.74rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; }
   .chips { display: flex; flex-wrap: wrap; gap: 8px; }
   .chip {
-    border: 0; border-radius: 999px; padding: 8px 14px; color: #fff; font-weight: 600; font-size: 0.92rem;
-    text-shadow: 0 1px 1px rgba(0,0,0,0.25);
+    border: 0; border-radius: 999px; padding: 8px 14px; color: #111; font-weight: 600; font-size: 0.92rem;
   }
   .chip[aria-pressed="true"] { box-shadow: 0 0 0 3px var(--surface), 0 0 0 5px var(--ink); }
+  .stepno { margin: 0 0 6px; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+  .bigbtn { display: block; width: 100%; border: 0; border-radius: 14px; padding: 14px 16px; min-height: 52px; font-weight: 800; font-size: 1.05rem; background: var(--ink); color: var(--bg); }
+  .okmsg { margin: 0 0 8px; font-weight: 700; font-size: 0.95rem; color: #1E8E4E; }
+  @media (prefers-color-scheme: dark) { .okmsg { color: #5FD58F; } }
+
+  #barNum, #totalNum { display: inline-block; }
+  .bump { animation: bump 0.45s; }
+  @keyframes bump { 0% { transform: scale(1); } 40% { transform: scale(1.4); } 100% { transform: scale(1); } }
+
+  #dash {
+    margin-top: 14px; background: var(--surface); border: 1px solid var(--line);
+    border-radius: 20px; padding: 16px 16px 18px; scroll-margin-top: 64px;
+  }
+  #dash .dashhead { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+  #dash h2 { margin: 0; font-size: 1.3rem; }
+  #dash h2:focus { outline: none; }
+  #dash h3 { margin: 16px 0 8px; font-size: 0.95rem; color: var(--muted); font-weight: 600; }
+  #dash .actions { display: flex; gap: 8px; }
+  #dash .actions button {
+    border-radius: 999px; padding: 9px 16px; font-weight: 700; font-size: 0.9rem;
+    border: 1px solid var(--line); background: var(--bg); min-height: 40px;
+  }
+  #dash .actions button:disabled { opacity: 0.4; cursor: default; }
+  #dash .actions button.armed { background: #C0283D; border-color: #C0283D; color: #fff; }
+  .total { display: flex; align-items: baseline; gap: 8px; margin-top: 10px; }
+  .total strong { font-size: 2.6rem; line-height: 1; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .total span { color: var(--muted); }
+  #last { margin: 4px 0 0; color: var(--muted); font-size: 0.9rem; min-height: 1.3em; }
+  .bar { display: grid; grid-template-columns: 5.6rem 1fr 2.2rem; align-items: center; gap: 10px; margin: 6px 0; font-size: 0.92rem; }
+  .bar .track { height: 12px; border-radius: 999px; background: var(--bg); overflow: hidden; }
+  .bar .fill { height: 100%; border-radius: 999px; transition: width 0.3s; }
+  .bar .n { text-align: right; font-variant-numeric: tabular-nums; font-weight: 700; }
+  .toplist { list-style: none; margin: 0; padding: 0; }
+  .toplist li { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-top: 1px solid var(--line); font-size: 0.95rem; }
+  .toplist li:first-child { border-top: 0; }
+  .toplist .dot { width: 12px; height: 12px; border-radius: 50%; flex: none; }
+  .toplist .w { font-weight: 600; }
+  .toplist .core { color: var(--muted); font-size: 0.85rem; }
+  .toplist .grow { flex: 1; min-width: 0; }
+  .toplist .n { font-weight: 800; font-variant-numeric: tabular-nums; }
+  .empty { color: var(--muted); font-size: 0.95rem; margin: 10px 0 0; }
 
   footer { text-align: center; color: var(--muted); padding: 0 16px 24px; }
   footer .credit { max-width: 60ch; margin: 0 auto; font-size: 0.72rem; line-height: 1.5; }
-  @media (prefers-reduced-motion: reduce) { .seg, .seg path { transition: none; } }
+  @media (prefers-reduced-motion: reduce) { .seg, .seg path, .bar .fill { transition: none; } .bump { animation: none; } }
 </style>
 </head>
 <body>
@@ -131,26 +207,58 @@
   <button id="install" type="button">Install app</button>
 </header>
 
+<div id="statbar">
+  <span><strong id="barNum">0</strong> words tallied</span>
+  <button id="toTally" type="button">View tally</button>
+</div>
+
 <main>
   <div id="ioshint">To install on iPhone or iPad: tap the Share button, then choose Add to Home Screen.</div>
 
-  <div class="tools">
-    <span>Tap any word to explore it.</span>
-    <div class="zoom" role="group" aria-label="Zoom">
-      <button id="zout" type="button" aria-label="Zoom out">−</button>
-      <button id="zin" type="button" aria-label="Zoom in">+</button>
-    </div>
+  <ol class="ringkey" aria-label="How to read the wheel, from the center outward">
+    <li><b>1</b> Core feeling</li>
+    <li><b>2</b> Feeling</li>
+    <li><b>3</b> Shade</li>
+    <li class="act"><b>4</b> What to do</li>
+  </ol>
+  <div id="hint" role="note">
+    <p><strong>New here?</strong> Start in the center and work outward, one ring at a time, staying in the same color. Every word you tap is added to your tally. The outer ring suggests actions you can take.</p>
+    <button id="hintOk" type="button">Got it</button>
   </div>
 
-  <div id="stage" tabindex="0" aria-label="Feelings wheel, scrollable">
+  <div class="tools">
+    <span id="toolsMsg">Step 1: tap a center word. Every word you tap is added to your tally.</span>
+    <button id="backBtn" type="button">Back to full wheel</button>
+  </div>
+
+  <div id="stage" tabindex="0" aria-label="Feelings wheel">
     <svg id="wheel" viewBox="-505 -505 1010 1010" role="img" aria-label="Feelings wheel with four rings: core feeling, feeling, finer nuance and an idea for what to do"></svg>
   </div>
 
   <section id="card" aria-live="polite"></section>
+
+  <section id="dash" aria-labelledby="dashTitle">
+    <div class="dashhead">
+      <h2 id="dashTitle" tabindex="-1">Your tally</h2>
+      <div class="actions">
+        <button id="undo" type="button">Undo</button>
+        <button id="reset" type="button">Reset</button>
+      </div>
+    </div>
+    <div class="total"><strong id="totalNum">0</strong><span>words tallied</span></div>
+    <p id="last" aria-live="polite"></p>
+    <h3>By core feeling</h3>
+    <div id="bars"></div>
+    <h3 id="topHead">Most logged feelings</h3>
+    <ol id="top" class="toplist"></ol>
+    <h3 id="actHead">Actions you chose</h3>
+    <ol id="acts" class="toplist"></ol>
+    <p id="empty" class="empty">Start with a center word. Every word you tap is added here.</p>
+  </section>
 </main>
 
 <footer>
-  <p class="credit">“The Feelings Wheel” created by Dr. Gloria Willcox. “Behavioral Feelings Wheel Tally” created by Douglas Smith.</p>
+  <p class="credit">Adapted from “The Feelings Wheel” created by Dr. Gloria Willcox.</p>
 </footer>
 
 <script>
@@ -192,10 +300,11 @@
   ];
 
   var RADII = [0, 100, 215, 355, 500];       // ring boundaries (viewBox units)
-  var TINTS = [-0.05, 0.30, 0.15, -0.08];    // per ring: darker / lighter
+  var TINTS = [0, 0.30, 0.15, 0];            // per ring: base / lighter
   var TOTAL = DATA.reduce(function (s, w) { return s + w.r3.length; }, 0);
   var NAVY = "#14122B";
   var APP_NAME = "Feelings Wheel";
+  var REDUCE = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   function hexToRgb(h) {
     var n = parseInt(h.slice(1), 16);
@@ -208,9 +317,32 @@
     return "rgb(" + c[0] + "," + c[1] + "," + c[2] + ")";
   }
 
+  /* All labels are black. Wedge colours are lightened only as much as needed
+     so black text reaches a 4.6:1 contrast on every ring of the wedge. */
+  var TEXT = "#111111";
+  function lum(rgb) {
+    var a = rgb.map(function (v) { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); });
+    return 0.2126 * a[0] + 0.7152 * a[1] + 0.0722 * a[2];
+  }
+  var TEXT_L = lum(hexToRgb(TEXT));
+  function shade(rgb, t) {
+    return rgb.map(function (v) { return Math.round(t >= 0 ? v + (255 - v) * t : v * (1 + t)); });
+  }
+  function fitBase(hex) {
+    var c = hexToRgb(hex);
+    for (var t = 0; t <= 1; t += 0.01) {
+      var b = shade(c, t);
+      var ok = TINTS.every(function (x) { return (lum(shade(b, x)) + 0.05) / (TEXT_L + 0.05) >= 4.6; });
+      if (ok) return "#" + b.map(function (v) { return ("0" + v.toString(16)).slice(-2); }).join("");
+    }
+    return hex;
+  }
+  function fillStyle(color) { return "background:" + color; }
+
   // Wedge spans (degrees, clockwise from 12 o'clock)
   var acc = 0;
   DATA.forEach(function (w) {
+    w.color = fitBase(w.color);
     w.span = 360 * w.r3.length / TOTAL;
     w.a0 = acc;
     acc += w.span;
@@ -218,7 +350,7 @@
   });
 
   /* ------------------------------------------------------------------ */
-  /* 1. App icon: drawn on an off-screen canvas, exported as PNG URIs    */
+  /* App icon: drawn on an off-screen canvas, exported as PNG data URIs  */
   /* ------------------------------------------------------------------ */
   function drawIcon(size) {
     var cv = document.createElement("canvas");
@@ -233,8 +365,7 @@
     x.fillStyle = g;
     x.fillRect(0, 0, size, size);
 
-    // Keep the wheel inside the maskable safe zone (circle of 40% radius)
-    var wheelR = 190 * s;
+    var wheelR = 190 * s;   // inside the maskable safe zone
     DATA.forEach(function (w) {
       var a0 = (w.a0 - 90) * Math.PI / 180;
       var a1 = (w.a0 + w.span - 90) * Math.PI / 180;
@@ -251,24 +382,13 @@
         x.stroke();
       }
     });
-    // centre dot
-    x.beginPath();
-    x.arc(cx, cy, 20 * s, 0, Math.PI * 2);
-    x.fillStyle = NAVY;
-    x.fill();
-    x.beginPath();
-    x.arc(cx, cy, 11 * s, 0, Math.PI * 2);
-    x.fillStyle = "#FFFFFF";
-    x.fill();
-
+    x.beginPath(); x.arc(cx, cy, 20 * s, 0, Math.PI * 2); x.fillStyle = NAVY; x.fill();
+    x.beginPath(); x.arc(cx, cy, 11 * s, 0, Math.PI * 2); x.fillStyle = "#FFFFFF"; x.fill();
     return cv.toDataURL("image/png");
   }
 
   var icon512 = "", icon192 = "";
-  try {
-    icon512 = drawIcon(512);
-    icon192 = drawIcon(192);
-  } catch (e) { /* canvas unavailable: the app still works without the icon */ }
+  try { icon512 = drawIcon(512); icon192 = drawIcon(192); } catch (e) { /* app works without the icon */ }
 
   function setLink(rel, attrs) {
     var el = document.querySelector('link[rel="' + rel + '"]');
@@ -277,21 +397,16 @@
     return el;
   }
 
-  /* ------------------------------------------------------------------ */
-  /* 2. iOS home screen support                                          */
-  /* ------------------------------------------------------------------ */
+  /* iOS home screen support */
   if (icon512) {
     setLink("apple-touch-icon", { href: icon512, sizes: "512x512" });
     setLink("icon", { href: icon192, type: "image/png", sizes: "192x192" });
     document.getElementById("hdrIcon").src = icon192;
   }
 
-  /* ------------------------------------------------------------------ */
-  /* 3. Web App Manifest from a Blob URL                                 */
-  /* ------------------------------------------------------------------ */
+  /* Web App Manifest from a Blob URL */
   (function () {
     var web = /^https?:$/.test(location.protocol);
-    // A blob: manifest cannot resolve "." against the page, so use absolute URLs when hosted.
     var startUrl = web ? location.origin + location.pathname : ".";
     var manifest = {
       name: APP_NAME,
@@ -315,9 +430,7 @@
     } catch (e) { /* ignore */ }
   })();
 
-  /* ------------------------------------------------------------------ */
-  /* 4. Offline service worker (Blob first, ./sw.js as optional fallback) */
-  /* ------------------------------------------------------------------ */
+  /* Offline service worker (Blob first, ./sw.js as optional fallback) */
   var SW_SRC = [
     "var CACHE='feelings-wheel-v1';",
     "self.addEventListener('install',function(e){self.skipWaiting();",
@@ -333,16 +446,13 @@
     window.addEventListener("load", function () {
       var blobUrl = URL.createObjectURL(new Blob([SW_SRC], { type: "text/javascript" }));
       navigator.serviceWorker.register(blobUrl).catch(function () {
-        // Browsers require service worker scripts to be real same-origin files, so a blob: URL is usually
-        // refused. If an optional sw.js sits next to index.html, use that instead.
         return fetch("sw.js", { method: "HEAD" }).then(function (r) {
           if (r.ok) return navigator.serviceWorker.register("sw.js");
         });
-      }).catch(function () { /* the page is fully self-contained, so it still loads normally */ });
+      }).catch(function () { /* page is self-contained, so it still loads normally */ });
     });
   }
 
-  /* Install prompt (Android / desktop Chrome) and iOS hint */
   var deferred = null;
   var installBtn = document.getElementById("install");
   window.addEventListener("beforeinstallprompt", function (e) {
@@ -366,6 +476,7 @@
   /* ------------------------------------------------------------------ */
   var svg = document.getElementById("wheel");
   var card = document.getElementById("card");
+  var stage = document.getElementById("stage");
 
   function pol(r, a) {
     var rad = a * Math.PI / 180;
@@ -384,7 +495,7 @@
       "L" + f(p2[0]) + " " + f(p2[1]) +
       "A" + r0 + " " + r0 + " 0 " + large + " 0 " + f(p3[0]) + " " + f(p3[1]) + "Z";
   }
-  function esc(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;"); }
+  function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;"); }
 
   var FONT = [20, 15, 14.5, 16];
   var html = "";
@@ -392,12 +503,16 @@
     function seg(ring, i, a0, a1, label) {
       var mid = (a0 + a1) / 2;
       var rm = (RADII[ring] + RADII[ring + 1]) / 2;
-      if (ring === 0) rm = 62;
+      var fs = FONT[ring];
+      if (ring === 0) {            // core labels: fit inside the small centre ring
+        rm = 55;
+        fs = Math.min(20, 80 / (0.62 * label.length));
+      }
       var p = pol(rm, mid);
       var rot = mid - 90 + (mid > 180 ? 180 : 0);
       html += '<g class="seg' + (ring === 0 ? " core" : "") + '" data-c="' + ci + '" data-r="' + ring + '" data-i="' + i + '">' +
         '<path d="' + sector(RADII[ring], RADII[ring + 1], a0, a1) + '" fill="' + w.cols[ring] + '"/>' +
-        '<text transform="translate(' + f(p[0]) + " " + f(p[1]) + ") rotate(" + f(rot) + ')" text-anchor="middle" dominant-baseline="central" font-size="' + FONT[ring] + '">' +
+        '<text transform="translate(' + f(p[0]) + " " + f(p[1]) + ") rotate(" + f(rot) + ')" text-anchor="middle" dominant-baseline="central" font-size="' + f(fs) + '">' +
         esc(label) + "</text></g>";
     }
     seg(0, 0, w.a0, w.a0 + w.span, w.name);
@@ -410,116 +525,374 @@
   });
   svg.innerHTML = html;
 
-  /* Selection state and card */
-  var sel = null;
+  /* First-visit hint */
+  (function () {
+    var hint = document.getElementById("hint"), seen = false;
+    try { seen = localStorage.getItem("fw-hint-v3") === "1"; } catch (e) {}
+    if (!seen) hint.style.display = "flex";
+    document.getElementById("hintOk").addEventListener("click", function () {
+      hint.style.display = "none";
+      try { localStorage.setItem("fw-hint-v3", "1"); } catch (e) {}
+    });
+  })();
 
-  function applySelection() {
-    var segs = svg.querySelectorAll(".seg");
+  /* ------------------------------------------------------------------ */
+  /* Guided journey: center word -> ring 2 -> ring 3 -> ring 4           */
+  /* Every tap is tallied. Undo and Reset rewind the journey.            */
+  /* ------------------------------------------------------------------ */
+  var STORE = "feelings-wheel-tally-v4";
+  var STEP_NAMES = ["Center word", "Second ring", "Third ring", "Fourth ring"];
+  var STEP_PROMPT = [
+    "Start with a center word.",
+    "Now choose from the second ring.",
+    "Now choose from the third ring.",
+    "Finally, choose from the fourth ring."
+  ];
+  var tally = { journeys: [], closed: false };   // journeys: arrays of "core.ring.index" keys
+  var okMsg = "";
+
+  function wordFor(key) {
+    var p = String(key).split(".");
+    var c = +p[0], r = +p[1], i = +p[2];
+    var w = DATA[c];
+    if (!w) return null;
+    var list = r === 0 ? [w.name] : (r === 1 ? w.r2 : (r === 2 ? w.r3 : w.r4));
+    return list[i] ? { word: list[i], c: c, r: r, i: i } : null;
+  }
+  function cleanJourney(keys) {
+    var out = [], c = null;
+    for (var n = 0; n < keys.length && n < 4; n++) {
+      var k = wordFor(keys[n]);
+      if (!k || k.r !== n) break;
+      if (n > 0 && k.c !== c) break;
+      if (n === 0) c = k.c;
+      out.push(keys[n]);
+    }
+    return out;
+  }
+  try {
+    var saved = JSON.parse(localStorage.getItem(STORE) || "null");
+    if (saved && Array.isArray(saved.journeys)) {
+      saved.journeys.forEach(function (j) {
+        var cj = Array.isArray(j) ? cleanJourney(j) : [];
+        if (cj.length) tally.journeys.push(cj);
+      });
+      tally.closed = !!saved.closed && tally.journeys.length > 0;
+    }
+  } catch (e) { /* storage unavailable: tally lasts for this visit only */ }
+
+  function saveTally() {
+    try { localStorage.setItem(STORE, JSON.stringify(tally)); } catch (e) {}
+  }
+  function allKeys() { return [].concat.apply([], tally.journeys); }
+
+  /* st = words chosen so far in this check-in (0-4) */
+  function current() {
+    var J = (!tally.closed && tally.journeys.length) ? tally.journeys[tally.journeys.length - 1] : null;
+    var cur = { st: J ? J.length : 0, c: null, idx: [] };
+    if (J) J.forEach(function (k) { var q = wordFor(k); cur.c = q.c; cur.idx[q.r] = q.i; });
+    return cur;
+  }
+  /* Step 1: any center word. Steps 2-4: any word in the next ring, same color family only. */
+  function allowed(c, r, i, cur) {
+    if (cur.st === 4) return false;
+    if (cur.st === 0) return r === 0;
+    return r === cur.st && c === cur.c;
+  }
+
+  /* ---- zoom ---- */
+  var FULL = [-505, -505, 1010, 1010];
+  var vb = FULL.slice(), focus = null, anim = null;
+  var toolsMsg = document.getElementById("toolsMsg");
+  var backBtn = document.getElementById("backBtn");
+  var keyItems = document.querySelectorAll(".ringkey li");
+  var flashTimer = null;
+
+  function setVB(a) { vb = a; svg.setAttribute("viewBox", a.map(f).join(" ")); }
+  function animateTo(target) {
+    cancelAnimationFrame(anim);
+    if (REDUCE) { setVB(target); return; }
+    var from = vb.slice(), t0 = null, dur = 380;
+    function step(ts) {
+      if (t0 === null) t0 = ts;
+      var t = Math.min(1, (ts - t0) / dur), e = 1 - Math.pow(1 - t, 3);
+      setVB(from.map(function (v, i) { return v + (target[i] - v) * e; }));
+      if (t < 1) anim = requestAnimationFrame(step);
+    }
+    anim = requestAnimationFrame(step);
+  }
+  function wedgeBox(c) {
+    var w = DATA[c], pts = [[0, 0]];
+    for (var a = w.a0; a < w.a0 + w.span; a += 2) pts.push(pol(500, a));
+    pts.push(pol(500, w.a0 + w.span));
+    var xs = pts.map(function (p) { return p[0]; }), ys = pts.map(function (p) { return p[1]; });
+    var minX = Math.min.apply(null, xs), maxX = Math.max.apply(null, xs);
+    var minY = Math.min.apply(null, ys), maxY = Math.max.apply(null, ys);
+    var size = Math.max(Math.max(maxX - minX, maxY - minY) + 50, 440);
+    var cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
+    return [cx - size / 2, cy - size / 2, size, size];
+  }
+  function focusOn(c) { focus = c; animateTo(wedgeBox(c)); updateTools(); }
+  function unfocus() { focus = null; animateTo(FULL); updateTools(); }
+  function ensureWheelVisible() {
+    var r = stage.getBoundingClientRect();
+    if (r.top < 60 || r.bottom > window.innerHeight - 20) {
+      stage.scrollIntoView({ behavior: REDUCE ? "auto" : "smooth", block: "start" });
+    }
+  }
+
+  function updateTools() {
+    var cur = current();
+    toolsMsg.textContent = cur.st === 0 ? "Step 1: tap a center word. Every word you tap is added to your tally."
+      : cur.st === 4 ? "Check-in complete."
+      : "Step " + (cur.st + 1) + ": tap a word in the highlighted ring.";
+    if (cur.st >= 1) {
+      backBtn.style.display = "inline-block";
+      backBtn.textContent = focus !== null ? "Show full wheel" : "Zoom in";
+    } else {
+      backBtn.style.display = "none";
+    }
+    for (var k = 0; k < keyItems.length; k++) keyItems[k].classList.toggle("now", k === cur.st);
+  }
+  function flash(msg) {
+    toolsMsg.textContent = msg;
+    clearTimeout(flashTimer);
+    flashTimer = setTimeout(updateTools, 2400);
+  }
+  backBtn.addEventListener("click", function () {
+    var cur = current();
+    if (cur.st < 1) return;
+    if (focus !== null) unfocus(); else focusOn(cur.c);
+  });
+
+  /* ---- wheel highlighting ---- */
+  function applyView() {
+    var cur = current(), segs = svg.querySelectorAll(".seg"), raise = [];
     for (var k = 0; k < segs.length; k++) {
       var el = segs[k], c = +el.dataset.c, r = +el.dataset.r, i = +el.dataset.i;
       var cls = "seg" + (r === 0 ? " core" : "");
-      if (sel) {
-        if (c !== sel.c) cls += " dim";
-        else {
-          var on = false, soft = false;
-          if (sel.r === 0) { on = r === 0; }
-          else if (sel.r === 1) {
-            on = r === 0 || (r === 1 && i === sel.i) || (r === 2 && Math.floor(i / 2) === sel.i);
-            soft = !on;
-          } else if (sel.r === 2) {
-            on = r === 0 || (r === 2 && i === sel.i) || (r === 1 && i === Math.floor(sel.i / 2));
-            soft = !on;
-          } else {
-            on = r === 0 || (r === 3 && i === sel.i);
-          }
-          if (on) cls += " on"; else if (soft) cls += " soft";
-        }
-      }
+      var inWedge = cur.st === 0 || c === cur.c;
+      var chosen = cur.st >= 1 && c === cur.c && r < cur.st && i === cur.idx[r];
+      if (chosen) { cls += " on"; raise.push(el); }
+      else if (!inWedge) cls += " dim";
+      else if (allowed(c, r, i, cur)) cls += " active";
+      else cls += " faded";
       el.setAttribute("class", cls);
     }
+    raise.forEach(function (el) { svg.appendChild(el); });   // keep the white outlines on top
   }
 
-  function chip(label, c, r, i, pressed) {
-    return '<button type="button" class="chip" style="background:' + DATA[c].color +
-      '" data-c="' + c + '" data-r="' + r + '" data-i="' + i + '" aria-pressed="' + (pressed ? "true" : "false") + '">' + esc(label) + "</button>";
+  /* ---- card ---- */
+  function chip(label, c, r, i) {
+    return '<button type="button" class="chip" style="' + fillStyle(DATA[c].color) +
+      '" data-c="' + c + '" data-r="' + r + '" data-i="' + i + '">' + esc(label) + "</button>";
+  }
+  function crumbText(cur) {
+    var w = DATA[cur.c], parts = [w.name];
+    if (cur.idx[1] !== undefined) parts.push(w.r2[cur.idx[1]]);
+    if (cur.idx[2] !== undefined) parts.push(w.r3[cur.idx[2]]);
+    if (cur.idx[3] !== undefined) parts.push(w.r4[cur.idx[3]]);
+    return parts.join(" › ");
   }
 
   function renderCard() {
-    if (!sel) {
-      card.innerHTML = '<h2>Start with the big picture</h2>' +
-        '<p class="lead">Pick the core feeling that fits best. Then narrow it down to a word that feels exact.</p>' +
-        '<div class="chips">' + DATA.map(function (w, c) { return chip(w.name, c, 0, 0, false); }).join("") + "</div>";
+    var cur = current(), out = "";
+    var w = cur.c !== null ? DATA[cur.c] : null;
+
+    if (cur.st === 4) {
+      out += '<span class="badge">Check-in complete</span>' +
+        (okMsg ? '<p class="okmsg">' + esc(okMsg) + "</p>" : "") +
+        '<p class="crumbs">' + esc(crumbText(cur)) + "</p>" +
+        "<h2>All four rings chosen</h2>" +
+        '<p class="lead">Each word you tapped was added to your tally. Start a new check-in to begin again from the center.</p>' +
+        '<button type="button" class="bigbtn" data-newci="1">Start a new check-in</button>';
+      card.innerHTML = out;
       return;
     }
-    var w = DATA[sel.c], out = "", title, crumbs = "", lead = "", kids = "", kidsTitle = "";
 
-    if (sel.r === 0) {
-      title = w.name;
-      lead = "A core feeling. Choose a more specific word to go deeper.";
-      kidsTitle = "Feelings under " + w.name.toLowerCase();
-      kids = w.r2.map(function (l, i) { return chip(l, sel.c, 1, i, false); }).join("");
-    } else if (sel.r === 1) {
-      title = w.r2[sel.i];
-      crumbs = w.name;
-      lead = "Is one of these closer to what you feel?";
-      kidsTitle = "Finer shades";
-      kids = [2 * sel.i, 2 * sel.i + 1].map(function (j) { return chip(w.r3[j], sel.c, 2, j, false); }).join("");
-    } else if (sel.r === 2) {
-      title = w.r3[sel.i];
-      crumbs = w.name + " › " + w.r2[Math.floor(sel.i / 2)];
-      lead = "That is a precise word for it. Ready to do something with it?";
-    } else {
-      title = w.r4[sel.i];
-      crumbs = w.name;
-      lead = "A next step that often helps with feeling " + w.name.toLowerCase() + ".";
+    out += '<p class="stepno">Step ' + (cur.st + 1) + " of 4 · " + STEP_NAMES[cur.st] + "</p>";
+    if (okMsg) out += '<p class="okmsg">' + esc(okMsg) + "</p>";
+    if (cur.st >= 1) out += '<p class="crumbs">' + esc(crumbText(cur)) + "</p>";
+    out += "<h2>" + esc(STEP_PROMPT[cur.st]) + "</h2>" +
+      '<p class="lead">' + (cur.st === 0
+        ? "Tap one of the seven center words. Only the ring that is lit up can be chosen."
+        : "Tap a word in the lit-up ring, or pick one below. Only words in the same color are available.") + "</p>";
+
+    var chips = "";
+    if (cur.st === 0) chips = DATA.map(function (d, c) { return chip(d.name, c, 0, 0); }).join("");
+    else if (cur.st === 1) chips = w.r2.map(function (l, i) { return chip(l, cur.c, 1, i); }).join("");
+    else if (cur.st === 2) chips = w.r3.map(function (l, i) { return chip(l, cur.c, 2, i); }).join("");
+    else chips = w.r4.map(function (l, i) { return chip(l, cur.c, 3, i); }).join("");
+    out += "<h3>Choose one</h3>" + '<div class="chips">' + chips + "</div>";
+
+    if (cur.st >= 1) {
+      out += '<h3>Changed your mind?</h3><div class="chips">' +
+        '<button type="button" class="chip" style="background:#D6D2E6" data-over="1">Start over</button></div>';
     }
-
-    out += (crumbs ? '<p class="crumbs">' + esc(crumbs) + "</p>" : "") + "<h2>" + esc(title) + "</h2>" +
-      '<p class="lead">' + esc(lead) + "</p>";
-    if (kids) out += "<h3>" + esc(kidsTitle) + '</h3><div class="chips">' + kids + "</div>";
-    out += "<h3>Ideas for " + esc(w.name.toLowerCase()) + ' moments</h3><div class="chips">' +
-      w.r4.map(function (l, i) { return chip(l, sel.c, 3, i, sel.r === 3 && sel.i === i); }).join("") + "</div>";
-    out += '<h3>Back to</h3><div class="chips">' +
-      '<button type="button" class="chip" style="background:#5E5B78" data-reset="1">All core feelings</button></div>';
     card.innerHTML = out;
   }
 
-  function select(c, r, i) {
-    sel = { c: c, r: r, i: i };
-    applySelection();
-    renderCard();
+  /* ---- actions ---- */
+  function bump() {
+    ["barNum", "totalNum"].forEach(function (id) {
+      var el = document.getElementById(id);
+      el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump");
+    });
+  }
+
+  /* Choosing a word tallies it immediately and moves to the next ring */
+  function choose(c, r, i, fromCard) {
+    var cur = current();
+    if (!allowed(c, r, i, cur)) return;
+    var key = c + "." + r + "." + i, info = wordFor(key), was = cur.st;
+    disarm();
+    if (was === 0) tally.journeys.push([key]);
+    else tally.journeys[tally.journeys.length - 1].push(key);
+    tally.closed = false;
+    okMsg = "Added to your tally: " + info.word + " ✓";
+    saveTally();
+    if (was === 0) focusOn(c);
+    renderAll();
+    bump();
+    if (fromCard) ensureWheelVisible();
+  }
+  function startNew() {
+    tally.closed = true;
+    okMsg = "";
+    saveTally();
+    unfocus();
+    renderAll();
+    ensureWheelVisible();
   }
 
   svg.addEventListener("click", function (e) {
     var g = e.target.closest(".seg");
-    if (g) select(+g.dataset.c, +g.dataset.r, +g.dataset.i);
+    if (!g) return;
+    var c = +g.dataset.c, r = +g.dataset.r, i = +g.dataset.i, cur = current();
+    if (allowed(c, r, i, cur)) choose(c, r, i, false);
+    else flash(cur.st === 4 ? "Press “Start a new check-in” to choose again."
+             : cur.st === 0 ? "Start with a center word."
+             : "Choose a word in the lit-up ring.");
   });
   card.addEventListener("click", function (e) {
     var b = e.target.closest("button");
     if (!b) return;
-    if (b.dataset.reset) { sel = null; applySelection(); renderCard(); return; }
-    select(+b.dataset.c, +b.dataset.r, +b.dataset.i);
+    if (b.dataset.newci || b.dataset.over) { startNew(); return; }
+    if (b.dataset.r !== undefined) choose(+b.dataset.c, +b.dataset.r, +b.dataset.i, true);
   });
 
-  /* Zoom */
-  var steps = [1, 1.7, 2.5, 3.5], zi = 0;
-  var stage = document.getElementById("stage");
-  var zin = document.getElementById("zin"), zout = document.getElementById("zout");
-  function setZoom(n) {
-    var cxr = (stage.scrollLeft + stage.clientWidth / 2) / (stage.scrollWidth || 1);
-    var cyr = (stage.scrollTop + stage.clientHeight / 2) / (stage.scrollHeight || 1);
-    zi = Math.max(0, Math.min(steps.length - 1, n));
-    svg.style.width = (steps[zi] * 100) + "%";
-    stage.scrollLeft = cxr * stage.scrollWidth - stage.clientWidth / 2;
-    stage.scrollTop = cyr * stage.scrollHeight - stage.clientHeight / 2;
-    zout.disabled = zi === 0;
-    zin.disabled = zi === steps.length - 1;
-  }
-  zin.addEventListener("click", function () { setZoom(zi + 1); });
-  zout.addEventListener("click", function () { setZoom(zi - 1); });
-  setZoom(0);
+  /* ------------------------------------------------------------------ */
+  /* Tally dashboard                                                     */
+  /* ------------------------------------------------------------------ */
+  var undoBtn = document.getElementById("undo");
+  var resetBtn = document.getElementById("reset");
+  var armed = false, armTimer = null;
 
-  renderCard();
+  function disarm() {
+    armed = false;
+    clearTimeout(armTimer);
+    resetBtn.textContent = "Reset";
+    resetBtn.classList.remove("armed");
+  }
+
+  function listHTML(rows, limit) {
+    return rows.slice(0, limit).map(function (r) {
+      return '<li><span class="dot" style="background:' + DATA[r.c].color + '"></span><span class="grow"><span class="w">' +
+        esc(r.word) + '</span> <span class="core">' + esc(DATA[r.c].name) + '</span></span><span class="n">' + r.n + "</span></li>";
+    }).join("");
+  }
+
+  function renderDash() {
+    var keys = allKeys(), counts = {};
+    keys.forEach(function (k) { counts[k] = (counts[k] || 0) + 1; });
+    document.getElementById("totalNum").textContent = keys.length;
+    document.getElementById("barNum").textContent = keys.length;
+
+    var last = keys.length ? wordFor(keys[keys.length - 1]) : null;
+    document.getElementById("last").textContent = last
+      ? "Last tapped: " + last.word + (last.r === 0 ? "" : " (" + DATA[last.c].name + ")")
+      : "";
+
+    var coreTotals = DATA.map(function () { return 0; });
+    var feelRows = [], actRows = [];
+    Object.keys(counts).forEach(function (k) {
+      var info = wordFor(k), row = { word: info.word, c: info.c, n: counts[k] };
+      coreTotals[info.c] += row.n;
+      if (info.r < 3) feelRows.push(row); else actRows.push(row);
+    });
+    var max = Math.max.apply(null, coreTotals.concat([1]));
+
+    document.getElementById("bars").innerHTML = DATA.map(function (w, c) {
+      return '<div class="bar"><span>' + esc(w.name) + '</span><div class="track"><div class="fill" style="width:' +
+        (coreTotals[c] / max * 100) + "%;background:" + w.color + '"></div></div><span class="n">' + coreTotals[c] + "</span></div>";
+    }).join("");
+
+    function byCount(a, b) { return b.n - a.n || a.word.localeCompare(b.word); }
+    feelRows.sort(byCount); actRows.sort(byCount);
+    document.getElementById("top").innerHTML = listHTML(feelRows, 10);
+    document.getElementById("topHead").style.display = feelRows.length ? "block" : "none";
+    document.getElementById("acts").innerHTML = listHTML(actRows, 5);
+    document.getElementById("actHead").style.display = actRows.length ? "block" : "none";
+
+    document.getElementById("empty").style.display = keys.length ? "none" : "block";
+    undoBtn.disabled = keys.length === 0;
+    resetBtn.disabled = keys.length === 0;
+    if (keys.length === 0) disarm();
+  }
+
+  function renderAll() {
+    applyView();
+    renderCard();
+    renderDash();
+    updateTools();
+  }
+
+  /* Undo removes the latest tapped word and rewinds one step */
+  undoBtn.addEventListener("click", function () {
+    disarm();
+    var before = current();
+    var J = tally.journeys[tally.journeys.length - 1];
+    if (!J) return;
+    J.pop();
+    if (!J.length) { tally.journeys.pop(); tally.closed = tally.journeys.length > 0; }
+    else tally.closed = false;
+    okMsg = "";
+    saveTally();
+    var now = current();
+    if (now.st === 0) unfocus();
+    else if ((before.st === 0 && now.st >= 1) || (focus !== null && focus !== now.c)) focusOn(now.c);
+    renderAll();
+  });
+
+  resetBtn.addEventListener("click", function () {
+    if (!armed) {
+      armed = true;
+      resetBtn.textContent = "Tap again to reset";
+      resetBtn.classList.add("armed");
+      armTimer = setTimeout(disarm, 4000);
+      return;
+    }
+    disarm();
+    tally = { journeys: [], closed: false };
+    okMsg = "";
+    saveTally();
+    unfocus();
+    renderAll();
+  });
+
+  /* Sticky bar: jump to the dashboard */
+  document.getElementById("toTally").addEventListener("click", function () {
+    var dash = document.getElementById("dash");
+    dash.scrollIntoView({ behavior: REDUCE ? "auto" : "smooth", block: "start" });
+    document.getElementById("dashTitle").focus({ preventScroll: true });
+  });
+
+  /* Resume a check-in in progress after a reload */
+  (function () {
+    var cur = current();
+    if (cur.st >= 1) { focus = cur.c; setVB(wedgeBox(cur.c)); }
+  })();
+  renderAll();
 })();
 </script>
 </body>
