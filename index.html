@@ -447,12 +447,12 @@ header .tag { display: block; }
 @media (max-width: 440px) { header .tag { display: none; } }
 #stage { position: relative; }
 #backBtn { position: absolute; top: 8px; right: 8px; z-index: 5; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; font-size: 0.78rem; font-weight: 700; min-height: 36px; box-shadow: 0 2px 8px -4px rgba(20,18,43,0.5); }
-#tabbar, #shareNav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 25; display: flex; justify-content: space-around; background: var(--surface); border-top: 1px solid var(--line); padding: 4px max(8px, env(safe-area-inset-right, 0px)) calc(4px + env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px)); }
-#tabbar button, #shareNav button { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 5px 2px 3px; min-height: 48px; background: none; border: 0; border-radius: 12px; color: var(--muted); font-size: 0.66rem; font-weight: 600; letter-spacing: 0.01em; }
-#tabbar button span, #shareNav button span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-#tabbar button svg, #shareNav button svg { display: block; opacity: 0.9; }
-#tabbar button[aria-current="page"], #shareNav button[aria-current="page"] { color: var(--ink); }
-#tabbar button[aria-current="page"] svg, #shareNav button[aria-current="page"] svg { opacity: 1; }
+#tabbar, .dlgnav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 25; display: flex; justify-content: space-around; background: var(--surface); border-top: 1px solid var(--line); padding: 4px max(8px, env(safe-area-inset-right, 0px)) calc(4px + env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px)); }
+#tabbar button, .dlgnav button { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 5px 2px 3px; min-height: 48px; background: none; border: 0; border-radius: 12px; color: var(--muted); font-size: 0.66rem; font-weight: 600; letter-spacing: 0.01em; }
+#tabbar button span, .dlgnav button span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#tabbar button svg, .dlgnav button svg { display: block; opacity: 0.9; }
+#tabbar button[aria-current="page"], .dlgnav button[aria-current="page"] { color: var(--ink); }
+#tabbar button[aria-current="page"] svg, .dlgnav button[aria-current="page"] svg { opacity: 1; }
 #tabbar button[aria-current="page"]::before { content: ""; position: absolute; }
 body { padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px)); }
 #updateBar { bottom: calc(58px + env(safe-area-inset-bottom, 0px)); padding-bottom: 10px; }
@@ -460,9 +460,9 @@ body.locked #tabbar { visibility: hidden; }
 
 header #hdrCount { display: block !important; }
 
-#shareDlg { margin: 12px auto auto; max-height: calc(100dvh - 12px - 72px - env(safe-area-inset-bottom, 0px)); }
-#shareDlg::backdrop { background: var(--scrim); }
-#shareNav { z-index: 600; }
+dialog:not(#tourDlg) { margin: 12px auto auto; max-height: calc(100dvh - 12px - 72px - env(safe-area-inset-bottom, 0px)); }
+dialog::backdrop { background: var(--scrim); }
+.dlgnav { z-index: 600; }
 
 #setBtn, #helpBtn { display: inline-grid; place-items: center; width: 40px; height: 40px; flex: none; background: rgba(255,255,255,.12); color: rgba(255,255,255,.85); border: 1px solid rgba(255,255,255,.18); border-radius: 999px; }
 #setBtn:hover, #helpBtn:hover { background: rgba(255,255,255,.2); }
@@ -474,13 +474,32 @@ footer #helpline .hl-main { font-weight: 700; color: var(--ink); font-size: 0.92
 footer #helpline a.hl-main { text-decoration: underline; text-underline-offset: 3px; }
 footer #helpline .hl-more { font-size: 0.74rem; color: var(--muted); }
 
+
+header h1 .beta { font-size: 0.62em; font-weight: 600; opacity: 0.7; letter-spacing: 0.02em; margin-left: 2px; }
+
+/* Calmer home: the step chips and the first-visit note step aside once a check-in is under way */
+body.started .prog, #hint { display: none !important; }
+/* This week */
+.weekcard { margin: 0 0 6px; }
+.weekrow { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+.wkday { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 8px 2px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); min-height: 78px; }
+.wkday.today { border-color: var(--ink); }
+.wkl { font-size: 0.7rem; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+.wkdots { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.wkdots i { display: block; width: 14px; height: 14px; border-radius: 50%; }
+.wkdots em { font-style: normal; font-size: 0.7rem; color: var(--muted); }
+/* Accessibility: larger tap targets, and words-only mode */
+html.big .chip, html.big .pill, html.big .range button, html.big .bigbtn, html.big #tabbar button, html.big .dlgnav button { min-height: 56px; font-size: 1.05rem; }
+html.big .chips { gap: 12px; }
+html.nowheel #stage, html.nowheel .prog { display: none !important; }
+
 </style>
 </head>
 <body>
 <header>
   <img id="hdrIcon" src="icon-192.png" alt="" width="40" height="40">
   <div class="grow">
-    <h1>Feelwell</h1>
+    <h1>Feelwell <span class="beta">(beta)</span></h1>
     <p class="tag">Name what you feel, then pick a next step.</p>
     <p id="hdrCount"><strong id="barNum">0</strong> <span id="barLabel">check-ins</span></p>
   </div>
@@ -530,7 +549,7 @@ footer #helpline .hl-more { font-size: 0.74rem; color: var(--muted); }
   </div>
   <div id="backupBar" class="notebar" role="status" hidden>
     <p><strong>Back up your check-ins.</strong> <span id="bkText"></span></p>
-    <span class="rbtns"><button type="button" id="bkBarNow" class="pill primary">Back up now</button><button type="button" id="bkBarLater" class="pill">Later</button></span>
+    <span class="rbtns"><button type="button" id="bkBarNow" class="pill primary">Back up now</button><button type="button" id="bkBarLater" class="pill">Later</button><button type="button" id="bkBarOff" class="pill">Stop reminding me</button></span>
   </div>
 
 
@@ -557,6 +576,9 @@ footer #helpline .hl-more { font-size: 0.74rem; color: var(--muted); }
     </div>
     <p id="last" aria-live="polite"></p>
     <p id="insight" class="insight" hidden></p>
+
+    <h3 id="weekHead">This week</h3>
+    <div id="week" class="weekcard"></div>
 
     <h3 id="chartHead">Check-ins per day</h3>
     <div id="chart" class="chart" role="img" aria-label="Check-ins per day"></div>
@@ -677,6 +699,9 @@ footer #helpline .hl-more { font-size: 0.74rem; color: var(--muted); }
   </div>
   <label class="check"><input type="checkbox" id="setHc"> <span>Higher contrast</span></label>
   <label class="check"><input type="checkbox" id="setMotion"> <span>Reduce animations</span></label>
+  <label class="check"><input type="checkbox" id="setBig"> <span>Larger buttons and tap targets</span></label>
+  <label class="check"><input type="checkbox" id="setNoWheel"> <span>Words only: hide the wheel (works well with a screen reader)</span></label>
+  <label class="check"><input type="checkbox" id="setBk"> <span>Remind me to back up my check-ins</span></label>
   <label class="check" id="setVibeRow"><input type="checkbox" id="setVibe"> <span>Vibrate when I tap a word</span></label>
 
   <h3 class="shh">Language and region</h3>
@@ -843,7 +868,7 @@ footer #helpline .hl-more { font-size: 0.74rem; color: var(--muted); }
   /* Settings and language                                               */
   /* ------------------------------------------------------------------ */
   var SET_KEY = "fw-settings";
-  var settings = { text: 100, hc: false, motion: true, vibrate: false, country: "", lang: "", defs: false };
+  var settings = { text: 100, hc: false, motion: true, vibrate: false, country: "", lang: "", defs: false, bkNudge: true, big: false, noWheel: false };
   try {
     var ss = JSON.parse(lsGet(SET_KEY) || "null");
     if (ss && typeof ss === "object") for (var sk in settings) if (ss[sk] !== undefined) settings[sk] = ss[sk];
@@ -855,6 +880,8 @@ footer #helpline .hl-more { font-size: 0.74rem; color: var(--muted); }
   document.documentElement.setAttribute("lang", LANG);
   document.documentElement.style.fontSize = (settings.text || 100) + "%";
   if (settings.hc) document.documentElement.classList.add("hc");
+  if (settings.big) document.documentElement.classList.add("big");
+  if (settings.noWheel) document.documentElement.classList.add("nowheel");
   if (settings.motion === false) document.documentElement.classList.add("nomotion");
 
   var ES = {}, ES_WORDS = {}, DEFS_ES = {};
@@ -1176,6 +1203,20 @@ footer #helpline .hl-more { font-size: 0.74rem; color: var(--muted); }
 "Línea de la Vida: 800 911 2000": "Línea de la Vida: 800 911 2000",
 "Tele-MANAS: call 14416": "Tele-MANAS: llama al 14416",
 "Find a helpline for your country at findahelpline.com. If you may be in immediate danger, call your local emergency number.": "Busca una línea de ayuda de tu país en findahelpline.com. Si puedes estar en peligro inmediato, llama al número de emergencias de tu zona.",
+"This week": "Esta semana",
+"No check-ins in the last 7 days yet. Your week will fill in here.": "Aún no hay registros en los últimos 7 días. Tu semana se irá llenando aquí.",
+"no check-ins": "sin registros",
+"Felt most often: {f} ({n} of {t}).": "Lo que más sentiste: {f} ({n} de {t}).",
+"Most chosen next step: {a}.": "Siguiente paso más elegido: {a}.",
+"Stop reminding me": "No recordármelo más",
+"Larger buttons and tap targets": "Botones y zonas de toque más grandes",
+"Words only: hide the wheel (works well with a screen reader)": "Solo palabras: ocultar la rueda (funciona bien con lector de pantalla)",
+"Remind me to back up my check-ins": "Recordarme hacer copia de mis registros",
+"Name what you feel in a few quick taps, then pick a healthy next step.": "Nombra lo que sientes en pocos toques y elige un siguiente paso saludable.",
+"Tap a core feeling at the center. Each step moves one ring out and gets more specific.": "Toca una emoción principal en el centro. Cada paso avanza un anillo y es más específico.",
+"Come back often": "Vuelve a menudo",
+"Your check-ins stay on this phone. Set a reminder and watch your week take shape.": "Tus registros se quedan en este teléfono. Activa un aviso y mira cómo toma forma tu semana.",
+"Main": "Principal",
 "Download file": "Descargar archivo"
 };
   ES_WORDS = {
@@ -1862,7 +1903,6 @@ footer #helpline .hl-more { font-size: 0.74rem; color: var(--muted); }
     "Second ring: go deeper into that family with a more exact feeling.",
     "Third ring: get precise with the closest word for it.",
     "Outer ring: a healthy behavior response, an idea for what to do next."];
-  var listMode = false;
 
   function setVB(a) { vb = a; svg.setAttribute("viewBox", a.map(f).join(" ")); }
   function animateTo(target) {
@@ -1889,7 +1929,7 @@ footer #helpline .hl-more { font-size: 0.74rem; color: var(--muted); }
     return [cx - size / 2, cy - size / 2, size, size];
   }
   function zoomUI() {
-    var z = isZoomed() && !listMode;
+    var z = isZoomed();
     svg.classList.toggle("zoomed", z);
     backBtn.style.display = z ? "inline-block" : "none";
     backBtn.textContent = t("Show full wheel");
@@ -1898,19 +1938,19 @@ footer #helpline .hl-more { font-size: 0.74rem; color: var(--muted); }
   function focusOn(c) { focus = c; animateTo(wedgeBox(c)); updateTools(); }
   function unfocus() { focus = null; animateTo(FULL); updateTools(); }
   function ensureWheelVisible() {
-    if (listMode) return;
     var r = stage.getBoundingClientRect();
     if (r.top < 60 || r.bottom > window.innerHeight - 20) stage.scrollIntoView({ behavior: REDUCE ? "auto" : "smooth", block: "start" });
   }
   function updateTools() {
     var cur = current();
     toolsMsg.textContent = cur.st === 0
-      ? t(listMode ? "Choose the feeling closest to yours." : "Start in the middle: tap the feeling closest to yours.")
+      ? t("Start in the middle: tap the feeling closest to yours.")
       : cur.st === 4 ? ""
-      : cur.st === 3 ? t(listMode ? "Last step: choose something to try." : "Last step: tap an idea for what to do next.")
-      : t(listMode ? "Choose a more specific word." : "Now tap a more specific word in the bright ring.");
-    newBtn.hidden = !(cur.st === 4 && !listMode);
-    var zoomed = isZoomed() && !listMode;
+      : cur.st === 3 ? t("Last step: tap an idea for what to do next.")
+      : t("Now tap a more specific word in the bright ring.");
+    newBtn.hidden = cur.st !== 4;
+    document.body.classList.toggle("started", cur.st >= 1);
+    var zoomed = isZoomed();
     zoomUI();
     if (zoomed && cur.st !== 4) toolsMsg.textContent += " " + t("Pinch to zoom and drag to look around.");
     for (var k = 0; k < keyItems.length; k++) { keyItems[k].classList.toggle("now", k === cur.st); keyItems[k].classList.toggle("done", k < cur.st); }
@@ -1921,7 +1961,6 @@ footer #helpline .hl-more { font-size: 0.74rem; color: var(--muted); }
     flashTimer = setTimeout(updateTools, long ? 6000 : 2400);
   }
   function applyMode() {
-    document.body.classList.toggle("listmode", listMode);
     updateTools();
   }
   backBtn.addEventListener("click", function () {
@@ -2096,7 +2135,7 @@ footer #helpline .hl-more { font-size: 0.74rem; color: var(--muted); }
   function nPtrs() { return Object.keys(ptrs).length; }
   function mark() { justDragged = true; setTimeout(function () { justDragged = false; }, 120); }
   svg.addEventListener("pointerdown", function (e) {
-    if (listMode || (e.pointerType === "mouse" && e.button !== 0)) return;
+    if ((e.pointerType === "mouse" && e.button !== 0)) return;
     ptrs[e.pointerId] = { x: e.clientX, y: e.clientY };
     if (nPtrs() === 2) {
       var ids = Object.keys(ptrs), a = ptrs[ids[0]], b = ptrs[ids[1]], r = svg.getBoundingClientRect();
@@ -2144,7 +2183,7 @@ footer #helpline .hl-more { font-size: 0.74rem; color: var(--muted); }
   svg.addEventListener("pointerup", endPan);
   svg.addEventListener("pointercancel", endPan);
   svg.addEventListener("wheel", function (e) {      // trackpad pinch / ctrl+scroll on a computer
-    if (!e.ctrlKey || listMode) return;
+    if (!e.ctrlKey) return;
     e.preventDefault();
     var r = svg.getBoundingClientRect(), sz = Math.max(160, Math.min(FULL[2], vb[2] * Math.exp(e.deltaY * 0.01)));
     var sx = vb[0] + (e.clientX - r.left) / r.width * vb[2], sy = vb[1] + (e.clientY - r.top) / r.height * vb[3];
@@ -2371,7 +2410,24 @@ footer #helpline .hl-more { font-size: 0.74rem; color: var(--muted); }
   /* ------------------------------------------------------------------ */
   /* Dialogs: edit a check-in, export, import                            */
   /* ------------------------------------------------------------------ */
-  function openDlg(d) { if (d.showModal) d.showModal(); else d.setAttribute("open", ""); }
+  var GO = ["home", "tally", "remind", "data"];
+  function dlgNav(d) {                           // the tab bar, repeated inside each window so you can still jump anywhere
+    var nav = d.querySelector(".dlgnav"), active = d.id === "shareDlg" ? 4 : -1;
+    if (!nav) {
+      nav = document.createElement("nav"); nav.className = "dlgnav"; nav.setAttribute("aria-label", t("Main"));
+      nav.innerHTML = $("tabbar").innerHTML.replace(/ id="[^"]*"/g, "").replace(/ aria-current="[^"]*"/g, "");
+      d.appendChild(nav);
+      Array.prototype.forEach.call(nav.querySelectorAll("button"), function (b, i) {
+        b.addEventListener("click", function () {
+          closeDlg(d);
+          if (i < GO.length) goPage(GO[i]);
+          else if (d.id !== "shareDlg") $("shareBtn").click();
+        });
+      });
+    }
+    Array.prototype.forEach.call(nav.querySelectorAll("button"), function (b, i) { if (i === active) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current"); });
+  }
+  function openDlg(d) { if (d.showModal) d.showModal(); else d.setAttribute("open", ""); if (d.id !== "tourDlg") dlgNav(d); }
   function closeDlg(d) { if (d.close) d.close(); else d.removeAttribute("open"); }
   ["editDlg", "exportDlg", "importDlg"].forEach(function (id) {
     var d = $(id);
@@ -2613,21 +2669,7 @@ footer #helpline .hl-more { font-size: 0.74rem; color: var(--muted); }
       urlBox.value = shareUrl();
     }
     function say(msg) { status.textContent = msg; }
-    var GO = ["home", "tally", "remind", "data"];
-    function shareNav() {                        // the tab bar, repeated inside the Share window so you can still jump anywhere
-      var nav = document.getElementById("shareNav");
-      if (!nav) {
-        nav = document.createElement("nav"); nav.id = "shareNav"; nav.className = "dlgnav"; nav.setAttribute("aria-label", "Main");
-        nav.innerHTML = $("tabbar").innerHTML.replace(/ id="[^"]*"/g, "").replace(/ aria-current="[^"]*"/g, "");
-        dlg.appendChild(nav);
-        Array.prototype.forEach.call(nav.querySelectorAll("button"), function (b, i) {
-          if (i < GO.length) b.addEventListener("click", function () { closeDlg(dlg); goPage(GO[i]); });
-          else b.addEventListener("click", function () { closeDlg(dlg); });
-        });
-      }
-      Array.prototype.forEach.call(nav.querySelectorAll("button"), function (b, i) { b.setAttribute("aria-current", i === 4 ? "page" : "false"); });
-    }
-    $("shareBtn").addEventListener("click", function () { build(); say(""); $("shNative").hidden = !navigator.share; openDlg(dlg); shareNav(); });
+    $("shareBtn").addEventListener("click", function () { build(); say(""); $("shNative").hidden = !navigator.share; openDlg(dlg); });
     $("shNative").addEventListener("click", function () {
       try { navigator.share({ title: "Feelwell", text: SHARE_TEXT, url: shareUrl() }).catch(function () {}); } catch (e) { say(t("Sharing from your phone isn't available here. Use the buttons below.")); }
     });
@@ -2696,8 +2738,8 @@ footer #helpline .hl-more { font-size: 0.74rem; color: var(--muted); }
   function renderBackup() {
     var ts = bkTs(), n = tally.journeys.length;
     $("bkLine").textContent = ts ? tf("Last backup: {when}.", { when: agoText(ts) }) : t("You have not backed up yet.");
-    var old = !ts || (Date.now() - ts) > 14 * 864e5, snooze = +lsGet("fw-bk-snooze") || 0;
-    var show = n >= 5 && old && Date.now() > snooze;
+    var old = !ts || (Date.now() - ts) > 7 * 864e5, snooze = +lsGet("fw-bk-snooze") || 0;
+    var show = settings.bkNudge !== false && n >= 3 && old && Date.now() > snooze;
     $("backupBar").hidden = !show;
     if (show) $("bkText").textContent = ts
       ? tf("Your last backup was {when}. Back up your {n} check-ins so they are not lost.", { when: agoText(ts), n: n })
@@ -2707,6 +2749,7 @@ footer #helpline .hl-more { font-size: 0.74rem; color: var(--muted); }
   $("bkNow").addEventListener("click", openBackup);
   $("bkBarNow").addEventListener("click", openBackup);
   $("bkBarLater").addEventListener("click", function () { lsSet("fw-bk-snooze", String(Date.now() + 3 * 864e5)); renderBackup(); });
+  $("bkBarOff").addEventListener("click", function () { settings.bkNudge = false; saveSettings(); renderBackup(); });
   $("exportDlg").addEventListener("close", renderBackup);
 
   /* ------------------------------------------------------------------ */
@@ -2735,6 +2778,7 @@ footer #helpline .hl-more { font-size: 0.74rem; color: var(--muted); }
       '</span> <span class="core">' + (top !== null && n ? esc(tf("mostly {f}", { f: coreName(+top) })) : "") + '</span></span><span class="n">' + n + "</span></li>";
   }
   function renderPatterns(F, all) {
+    renderWeek(all);
     var st = streaks(all), el = $("patterns"), h = "";
     h += '<p class="streak"><b>' + st.cur + "</b> " + esc(plural(st.cur, t("day in a row"), t("days in a row"))) + " · " + esc(tf("Best: {n}", { n: st.best })) + "</p>";
     if (!st.cur && all.length) h += '<p class="note">' + esc(t("Missing a day is okay. Pick it up again whenever you like.")) + "</p>";
@@ -2757,6 +2801,34 @@ footer #helpline .hl-more { font-size: 0.74rem; color: var(--muted); }
       h += "</ol>";
     }
     el.innerHTML = h;
+  }
+  function renderWeek(all) {
+    var el = $("week"), today = startOfDay(Date.now()), days = [], i, h = "", fam = {}, acts = {}, total = 0;
+    for (i = 6; i >= 0; i--) { var d = new Date(today); d.setDate(d.getDate() - i); days.push({ s: d.getTime(), d: d, js: [] }); }
+    all.forEach(function (j) {
+      if (j.t == null) return;
+      var s = startOfDay(j.t);
+      for (var x = 0; x < 7; x++) if (days[x].s === s) {
+        days[x].js.push(j); total++;
+        var c = wordFor(j.k[0]).c; fam[c] = (fam[c] || 0) + 1;
+        if (j.k[3] != null) acts[j.k[3]] = (acts[j.k[3]] || 0) + 1;
+      }
+    });
+    if (!total) { el.innerHTML = '<p class="note">' + esc(t("No check-ins in the last 7 days yet. Your week will fill in here.")) + "</p>"; return; }
+    h += '<div class="weekrow" role="list">';
+    days.forEach(function (dy) {
+      var dots = dy.js.slice(0, 4).map(function (j) { return '<i style="background:' + DATA[wordFor(j.k[0]).c].color + '"></i>'; }).join("");
+      var more = dy.js.length > 4 ? '<em>+' + (dy.js.length - 4) + "</em>" : "";
+      var lab = dy.d.toLocaleDateString(LOCALE, { weekday: "short" });
+      var names = dy.js.map(function (j) { return coreName(wordFor(j.k[0]).c); }).join(", ");
+      h += '<div class="wkday' + (dy.s === today ? " today" : "") + '" role="listitem" aria-label="' + esc(dy.d.toLocaleDateString(LOCALE, { weekday: "long" }) + ": " + (names || t("no check-ins"))) + '"><span class="wkl">' + esc(lab) + '</span><span class="wkdots">' + dots + more + "</span></div>";
+    });
+    h += "</div>";
+    var tf0 = topKey(fam);
+    h += '<p class="note">' + esc(tf("Felt most often: {f} ({n} of {t}).", { f: coreName(+tf0), n: fam[tf0], t: total }));
+    var ta = Object.keys(acts).length ? topKey(acts) : null;
+    if (ta !== null) { var w = wordFor(ta); if (w) h += " " + esc(tf("Most chosen next step: {a}.", { a: w.word })); }
+    el.innerHTML = h + "</p>";
   }
   function hourName(h) { var ap = h >= 12 ? "PM" : "AM", hh = h % 12 || 12; return LANG === "es" ? String(h) + ":00" : hh + " " + ap; }
 
@@ -2912,6 +2984,7 @@ footer #helpline .hl-more { font-size: 0.74rem; color: var(--muted); }
     Array.prototype.forEach.call($("setDlg").querySelectorAll("[data-ts]"), function (b) { b.setAttribute("aria-pressed", String(+b.dataset.ts === +settings.text)); });
     $("setHc").checked = !!settings.hc; $("setMotion").checked = settings.motion === false; $("setVibe").checked = !!settings.vibrate;
     $("setVibeRow").hidden = !navigator.vibrate;
+    $("setBig").checked = !!settings.big; $("setNoWheel").checked = !!settings.noWheel; $("setBk").checked = settings.bkNudge !== false;
     $("setLang").value = LANG; $("setCountry").value = COUNTRIES[settings.country] ? settings.country : guessCountry();
     var has = !!pinData();
     $("pinOff").hidden = !has; $("pinOn").hidden = has;
@@ -2932,6 +3005,9 @@ footer #helpline .hl-more { font-size: 0.74rem; color: var(--muted); }
       settings.motion = !this.checked; REDUCE = window.matchMedia("(prefers-reduced-motion: reduce)").matches || settings.motion === false;
       document.documentElement.classList.toggle("nomotion", settings.motion === false); saveSettings();
     });
+    $("setBig").addEventListener("change", function () { settings.big = this.checked; document.documentElement.classList.toggle("big", settings.big); saveSettings(); });
+    $("setNoWheel").addEventListener("change", function () { settings.noWheel = this.checked; document.documentElement.classList.toggle("nowheel", settings.noWheel); saveSettings(); });
+    $("setBk").addEventListener("change", function () { settings.bkNudge = this.checked; saveSettings(); renderBackup(); });
     $("setVibe").addEventListener("change", function () { settings.vibrate = this.checked; saveSettings(); haptic(); });
     $("setCountry").addEventListener("change", function () { settings.country = this.value; saveSettings(); renderHelpline(); });
     $("setLang").addEventListener("change", function () { settings.lang = this.value; saveSettings(); location.reload(); });
@@ -2997,9 +3073,9 @@ footer #helpline .hl-more { font-size: 0.74rem; color: var(--muted); }
   /* First-run walkthrough                                               */
   /* ------------------------------------------------------------------ */
   var TOUR = [
-    ["Welcome to Feelwell", "Name what you feel in a few quick taps, then pick a healthy next step. No account needed."],
-    ["Start in the middle", "Tap a core feeling at the center of the wheel. Each step moves one ring outward and gets more specific. You can tap “I’m done” any time after step 2."],
-    ["Make it a habit", "Set a reminder, look for patterns in your tally, and back up your history now and then. Check-ins are saved on this phone."]
+    ["Welcome to Feelwell", "Name what you feel in a few quick taps, then pick a healthy next step."],
+    ["Start in the middle", "Tap a core feeling at the center. Each step moves one ring out and gets more specific."],
+    ["Come back often", "Your check-ins stay on this phone. Set a reminder and watch your week take shape."]
   ];
   var tourIdx = 0;
   function renderTour() {
