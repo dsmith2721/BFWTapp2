@@ -361,6 +361,30 @@ footer #helpline a { color: inherit; }
 @media (max-width: 440px) { header p { display: none; } }
 #card + .notebar { margin-top: 14px; }
 
+/* Tools row: "List view / Show wheel" always sits in the same spot (top right); the zoom button drops to its own line */
+.tools { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 8px; }
+.tools #toolsMsg { flex: none; grid-column: 1; grid-row: 1; }
+.toolbtns { display: contents; }
+#viewBtn { grid-column: 2; grid-row: 1; min-width: 7.6rem; text-align: center; }
+#backBtn { grid-column: 1 / -1; grid-row: 2; justify-self: end; }
+#newBtn { margin: 12px 0 0; }
+#newBtn[hidden] { display: none; }
+/* Top bar: Tally, Reminders, Share, quieter than before */
+#statbar { flex-wrap: wrap; }
+#statbar .sbtns { gap: 6px; flex-wrap: wrap; margin-left: auto; }
+#statbar button, #statbar #shareBtn { background: transparent; color: var(--bar-ink); border: 1px solid rgba(255,255,255,0.35); font-weight: 600; font-size: 0.8rem; padding: 6px 12px; min-height: 44px; }
+#statbar #shareBtn { display: inline-flex; align-items: center; gap: 5px; }
+#yourdata { margin-top: 28px; padding-top: 4px; }
+#yourdata h2 { font-size: 1.1rem; margin: 0 0 10px; }
+#yourdata .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+#yourdata .actions button { border-radius: 999px; padding: 9px 16px; font-weight: 700; font-size: 0.9rem; border: 1px solid var(--line); background: var(--bg); color: var(--ink); min-height: 44px; }
+.tools { align-items: start; } #viewBtn, #backBtn { align-self: start; }
+#statbar { gap: 6px; }
+#statbar button, #statbar #shareBtn { font-size: 0.78rem; padding: 4px 10px; min-height: 40px; }
+#statbar .sbtns { gap: 5px; flex-wrap: nowrap; }
+#statbar #shareBtn svg { width: 14px; height: 14px; }
+#statbar > span:first-child { font-size: 0.85rem; white-space: nowrap; }
+
 </style>
 </head>
 <body>
@@ -370,14 +394,13 @@ footer #helpline a { color: inherit; }
     <h1>Feelings Wheel</h1>
     <p>Name what you feel, then pick a next step.</p>
   </div>
-  <button id="shareBtn" type="button" aria-haspopup="dialog"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg> Share</button>
   <button id="setBtn" type="button" aria-label="Settings" aria-haspopup="dialog"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
   <button id="install" type="button">Install app</button>
 </header>
 
 <div id="statbar">
   <span><strong id="barNum">0</strong> <span id="barLabel">check-ins</span></span>
-  <span class="sbtns"><button id="toRemind" type="button">Reminders</button><button id="toTally" type="button">Tally</button></span>
+  <span class="sbtns"><button id="toTally" type="button">Tally</button><button id="toRemind" type="button">Reminders</button><button id="shareBtn" type="button" aria-haspopup="dialog"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg> Share</button></span>
 </div>
 
 <main>
@@ -410,6 +433,8 @@ footer #helpline a { color: inherit; }
   <div id="stage" tabindex="0" aria-label="Feelings wheel">
     <svg id="wheel" viewBox="-505 -505 1010 1010" role="group" aria-label="Feelings wheel with four rings: core feeling, feeling, finer nuance and an idea for what to do"></svg>
   </div>
+
+  <button id="newBtn" type="button" class="bigbtn" hidden>Start a new check-in</button>
 
   <section id="card" aria-live="polite"></section>
 
@@ -468,15 +493,6 @@ footer #helpline a { color: inherit; }
     <button id="moreHist" type="button" class="pill" hidden>Show more</button>
     <p id="empty" class="empty">Start with a center word. Every word you tap is added here.</p>
 
-    <h3>Your data</h3>
-    <div class="actions">
-      <button id="bkNow" type="button">Back up now</button>
-      <button id="sumBtn" type="button">Summary</button>
-      <button id="exportBtn" type="button">Export</button>
-      <button id="importBtn" type="button">Import</button>
-    </div>
-    <p id="bkLine" class="note"></p>
-    <p class="note">Check-ins are saved only on this device. Export a backup now and then so a cleared browser or a new phone doesn't wipe them.</p>
   </section>
 
   <section id="remind" aria-labelledby="remTitle">
@@ -516,6 +532,17 @@ footer #helpline a { color: inherit; }
         <p class="note">Phones only allow timed alerts from your calendar app. Adding this to your calendar is the most reliable way to get a notification, even when the app is closed.</p>
       </div>
     </div>
+  </section>
+  <section id="yourdata" aria-labelledby="ydTitle">
+    <h2 id="ydTitle">Your data</h2>
+    <div class="actions">
+      <button id="bkNow" type="button">Back up now</button>
+      <button id="sumBtn" type="button">Summary</button>
+      <button id="exportBtn" type="button">Export</button>
+      <button id="importBtn" type="button">Import</button>
+    </div>
+    <p id="bkLine" class="note"></p>
+    <p class="note">Check-ins are saved only on this device. Export a backup now and then so a cleared browser or a new phone doesn't wipe them.</p>
   </section>
 </main>
 
@@ -1720,7 +1747,9 @@ footer #helpline a { color: inherit; }
   /* ---- zoom and view mode ---- */
   var FULL = [-505, -505, 1010, 1010];
   var vb = FULL.slice(), focus = null, anim = null, flashTimer = null;
-  var toolsMsg = $("toolsMsg"), backBtn = $("backBtn"), viewBtn = $("viewBtn");
+  var toolsMsg = $("toolsMsg"), backBtn = $("backBtn"), viewBtn = $("viewBtn"), newBtn = $("newBtn");
+  newBtn.textContent = t("Start a new check-in");
+  newBtn.addEventListener("click", function () { startNew(); });
   var keyItems = document.querySelectorAll(".prog li");
   var ringBtns = document.querySelectorAll(".prog button");
   var pvRing = null, pvStep = -1;
@@ -1768,6 +1797,7 @@ footer #helpline a { color: inherit; }
       : cur.st === 4 ? t("Check-in complete.")
       : cur.st === 3 ? t(listMode ? "Last step: choose something to try." : "Last step: tap an idea for what to do next.")
       : t(listMode ? "Choose a more specific word." : "Now tap a more specific word in the bright ring.");
+    newBtn.hidden = !(cur.st === 4 && !listMode);
     var zoomed = focus !== null && cur.st >= 1 && !listMode;
     svg.classList.toggle("zoomed", zoomed);
     if (zoomed) toolsMsg.textContent += " " + t("Drag the wheel to look around.");
@@ -1889,8 +1919,7 @@ footer #helpline a { color: inherit; }
         '<p class="crumbs">' + esc(crumbText(cur)) + "</p>" +
         "<h2>" + esc(t("All four rings chosen")) + "</h2>" +
         '<p class="lead">' + esc(t("Your check-in was added to your tally. Add context if you like, or start a new check-in.")) + "</p>" +
-        ctxBlock(cur.j) +
-        '<button type="button" class="bigbtn" style="margin-top:14px" data-newci="1">' + esc(t("Start a new check-in")) + "</button>";
+        ctxBlock(cur.j);
       card.innerHTML = out;
       return;
     }

@@ -1,6 +1,6 @@
 // Bump CACHE_VERSION whenever you change any file, so installed copies update.
 // When a new worker takes over, the page shows a "new version" bar with a Reload button.
-var CACHE_VERSION = "v14";
+var CACHE_VERSION = "v15";
 var CACHE = "feelings-wheel-" + CACHE_VERSION;
 var SHELL = ["./", "index.html", "manifest.json", "icon-192.png", "icon-512.png",
   "icon-maskable-512.png", "apple-touch-icon-180.png", "favicon-32.png"];
