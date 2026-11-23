@@ -504,6 +504,17 @@ html.nowheel #stage, html.nowheel .prog { display: none !important; }
 #undo:hover { background: var(--chip, var(--surface)); }
 #undo:disabled { opacity: 0.4; }
 
+/* Tally and Reminders: section headings are full-width bands so each section is easy to find and clearly separate */
+#dash h3, #remind h3 {
+  margin: 32px -16px 14px; padding: 12px 16px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--acc) 10%, var(--surface)); color: var(--ink);
+  font-size: 1.12rem; font-weight: 800; letter-spacing: 0.005em; line-height: 1.25;
+  border-left: 6px solid var(--acc); padding-left: 12px; gap: 0;
+}
+#dash h3::before, #remind h3::before { display: none; }
+#dash #weekHead { margin-top: 24px; }
+#dash h3[hidden], #remind h3[hidden] { display: none; }
+
 </style>
 </head>
 <body>
