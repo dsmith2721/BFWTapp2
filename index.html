@@ -447,18 +447,32 @@ header .tag { display: block; }
 @media (max-width: 440px) { header .tag { display: none; } }
 #stage { position: relative; }
 #backBtn { position: absolute; top: 8px; right: 8px; z-index: 5; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; font-size: 0.78rem; font-weight: 700; min-height: 36px; box-shadow: 0 2px 8px -4px rgba(20,18,43,0.5); }
-#tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 25; display: flex; justify-content: space-around; background: var(--surface); border-top: 1px solid var(--line); padding: 4px max(8px, env(safe-area-inset-right, 0px)) calc(4px + env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px)); }
-#tabbar button { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 5px 2px 3px; min-height: 48px; background: none; border: 0; border-radius: 12px; color: var(--muted); font-size: 0.66rem; font-weight: 600; letter-spacing: 0.01em; }
-#tabbar button span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-#tabbar button svg { display: block; opacity: 0.9; }
-#tabbar button[aria-current="page"] { color: var(--ink); }
-#tabbar button[aria-current="page"] svg { opacity: 1; }
+#tabbar, #shareNav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 25; display: flex; justify-content: space-around; background: var(--surface); border-top: 1px solid var(--line); padding: 4px max(8px, env(safe-area-inset-right, 0px)) calc(4px + env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px)); }
+#tabbar button, #shareNav button { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 5px 2px 3px; min-height: 48px; background: none; border: 0; border-radius: 12px; color: var(--muted); font-size: 0.66rem; font-weight: 600; letter-spacing: 0.01em; }
+#tabbar button span, #shareNav button span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#tabbar button svg, #shareNav button svg { display: block; opacity: 0.9; }
+#tabbar button[aria-current="page"], #shareNav button[aria-current="page"] { color: var(--ink); }
+#tabbar button[aria-current="page"] svg, #shareNav button[aria-current="page"] svg { opacity: 1; }
 #tabbar button[aria-current="page"]::before { content: ""; position: absolute; }
 body { padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px)); }
 #updateBar { bottom: calc(58px + env(safe-area-inset-bottom, 0px)); padding-bottom: 10px; }
 body.locked #tabbar { visibility: hidden; }
 
 header #hdrCount { display: block !important; }
+
+#shareDlg { margin: 12px auto auto; max-height: calc(100dvh - 12px - 72px - env(safe-area-inset-bottom, 0px)); }
+#shareDlg::backdrop { background: var(--scrim); }
+#shareNav { z-index: 600; }
+
+#setBtn, #helpBtn { display: inline-grid; place-items: center; width: 40px; height: 40px; flex: none; background: rgba(255,255,255,.12); color: rgba(255,255,255,.85); border: 1px solid rgba(255,255,255,.18); border-radius: 999px; }
+#setBtn:hover, #helpBtn:hover { background: rgba(255,255,255,.2); }
+#helpBtn { margin-right: -4px; }
+
+footer #helpline { display: flex; flex-direction: column; align-items: center; gap: 6px; max-width: 420px; margin: 8px auto 0; padding: 14px 16px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); }
+footer #helpline .hl-label { font-size: 0.78rem; color: var(--muted); }
+footer #helpline .hl-main { font-weight: 700; color: var(--ink); font-size: 0.92rem; text-decoration: none; }
+footer #helpline a.hl-main { text-decoration: underline; text-underline-offset: 3px; }
+footer #helpline .hl-more { font-size: 0.74rem; color: var(--muted); }
 
 </style>
 </head>
@@ -470,6 +484,7 @@ header #hdrCount { display: block !important; }
     <p class="tag">Name what you feel, then pick a next step.</p>
     <p id="hdrCount"><strong id="barNum">0</strong> <span id="barLabel">check-ins</span></p>
   </div>
+  <button id="helpBtn" type="button" aria-label="Show the tutorial" title="Show the tutorial"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7"/><circle cx="12" cy="17" r=".6" fill="currentColor"/></svg></button>
   <button id="setBtn" type="button" aria-label="Settings" aria-haspopup="dialog"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
   <button id="install" type="button">Install app</button>
 </header>
@@ -621,7 +636,6 @@ header #hdrCount { display: block !important; }
 
 <footer>
   <p id="helpline"></p>
-  <p class="credit">Adapted from &ldquo;The Feelings Wheel&rdquo; created by Dr. Gloria Willcox.</p>
 </footer>
 
 <nav id="tabbar" aria-label="Main">
@@ -686,7 +700,6 @@ header #hdrCount { display: block !important; }
   <p id="pinMsg" class="note" role="status"></p>
 
   <div class="dlgactions">
-    <button type="button" id="setTour" class="pill">Show the tutorial</button>
     <span class="spacer"></span>
     <button type="button" class="pill primary" data-close>Done</button>
   </div>
@@ -2600,7 +2613,21 @@ header #hdrCount { display: block !important; }
       urlBox.value = shareUrl();
     }
     function say(msg) { status.textContent = msg; }
-    $("shareBtn").addEventListener("click", function () { build(); say(""); $("shNative").hidden = !navigator.share; openDlg(dlg); });
+    var GO = ["home", "tally", "remind", "data"];
+    function shareNav() {                        // the tab bar, repeated inside the Share window so you can still jump anywhere
+      var nav = document.getElementById("shareNav");
+      if (!nav) {
+        nav = document.createElement("nav"); nav.id = "shareNav"; nav.className = "dlgnav"; nav.setAttribute("aria-label", "Main");
+        nav.innerHTML = $("tabbar").innerHTML.replace(/ id="[^"]*"/g, "").replace(/ aria-current="[^"]*"/g, "");
+        dlg.appendChild(nav);
+        Array.prototype.forEach.call(nav.querySelectorAll("button"), function (b, i) {
+          if (i < GO.length) b.addEventListener("click", function () { closeDlg(dlg); goPage(GO[i]); });
+          else b.addEventListener("click", function () { closeDlg(dlg); });
+        });
+      }
+      Array.prototype.forEach.call(nav.querySelectorAll("button"), function (b, i) { b.setAttribute("aria-current", i === 4 ? "page" : "false"); });
+    }
+    $("shareBtn").addEventListener("click", function () { build(); say(""); $("shNative").hidden = !navigator.share; openDlg(dlg); shareNav(); });
     $("shNative").addEventListener("click", function () {
       try { navigator.share({ title: "Feelwell", text: SHARE_TEXT, url: shareUrl() }).catch(function () {}); } catch (e) { say(t("Sharing from your phone isn't available here. Use the buttons below.")); }
     });
@@ -2876,9 +2903,9 @@ header #hdrCount { display: block !important; }
   }
   function renderHelpline() {
     var c = COUNTRIES[settings.country] ? settings.country : guessCountry(), e = COUNTRIES[c];
-    var h = esc(t("If you are struggling or in crisis:")) + " ";
-    h += e[2] ? '<a href="tel:' + e[2] + '">' + esc(t(e[1])) + "</a>." : esc(t(e[1]));
-    h += " " + esc(t("More countries:")) + ' <a href="https://findahelpline.com" target="_blank" rel="noopener noreferrer">findahelpline.com</a>';
+    var h = '<span class="hl-label">' + esc(t("If you are struggling or in crisis:")) + "</span>";
+    h += e[2] ? '<a class="hl-main" href="tel:' + e[2] + '">' + esc(t(e[1])) + "</a>" : '<span class="hl-main">' + esc(t(e[1])) + "</span>";
+    h += '<span class="hl-more">' + esc(t("More countries:")) + ' <a href="https://findahelpline.com" target="_blank" rel="noopener noreferrer">findahelpline.com</a></span>';
     $("helpline").innerHTML = h;
   }
   function renderSettings() {
@@ -2908,7 +2935,7 @@ header #hdrCount { display: block !important; }
     $("setVibe").addEventListener("change", function () { settings.vibrate = this.checked; saveSettings(); haptic(); });
     $("setCountry").addEventListener("change", function () { settings.country = this.value; saveSettings(); renderHelpline(); });
     $("setLang").addEventListener("change", function () { settings.lang = this.value; saveSettings(); location.reload(); });
-    $("setTour").addEventListener("click", function () { closeDlg($("setDlg")); startTour(true); });
+    $("helpBtn").addEventListener("click", function () { startTour(true); });
   })();
 
   /* ---- PIN lock: keeps casual snoopers out. It does not encrypt the data. ---- */
