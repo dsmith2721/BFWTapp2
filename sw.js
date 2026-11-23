@@ -1,8 +1,28 @@
-var CACHE='feelings-wheel-v1';
-self.addEventListener('install',function(e){self.skipWaiting();
-e.waitUntil(caches.open(CACHE).then(function(c){return c.add(new Request(self.registration.scope,{cache:'reload'}));}).catch(function(){}));});
-self.addEventListener('activate',function(e){e.waitUntil(caches.keys().then(function(k){
-return Promise.all(k.filter(function(n){return n!==CACHE;}).map(function(n){return caches.delete(n);}));}).then(function(){return self.clients.claim();}));});
-self.addEventListener('fetch',function(e){if(e.request.method!=='GET')return;
-e.respondWith(fetch(e.request).then(function(r){if(r&&r.ok){var c=r.clone();caches.open(CACHE).then(function(ch){ch.put(e.request,c);});}return r;})
-.catch(function(){return caches.match(e.request).then(function(m){return m||caches.match(self.registration.scope);});}));});
+// Bump CACHE_VERSION whenever you change any file, so installed copies update.
+// When a new worker takes over, the page shows a "new version" bar with a Reload button.
+var CACHE_VERSION = "v4";
+var CACHE = "feelings-wheel-" + CACHE_VERSION;
+var SHELL = ["./", "index.html", "manifest.json", "icons/icon-192.png", "icons/icon-512.png",
+  "icons/icon-maskable-512.png", "icons/apple-touch-icon-180.png", "icons/favicon-32.png"];
+
+self.addEventListener("install", function (e) {
+  self.skipWaiting();
+  e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(SHELL); }).catch(function () {}));
+});
+self.addEventListener("activate", function (e) {
+  e.waitUntil(caches.keys().then(function (keys) {
+    return Promise.all(keys.filter(function (k) { return k.indexOf("feelings-wheel-") === 0 && k !== CACHE; })
+      .map(function (k) { return caches.delete(k); }));
+  }).then(function () { return self.clients.claim(); }));
+});
+// Network first, so a fresh deploy shows up; the saved copy is used when offline.
+self.addEventListener("fetch", function (e) {
+  var req = e.request;
+  if (req.method !== "GET" || new URL(req.url).origin !== self.location.origin) return;
+  e.respondWith(fetch(req).then(function (res) {
+    if (res && res.ok) { var copy = res.clone(); caches.open(CACHE).then(function (c) { c.put(req, copy); }); }
+    return res;
+  }).catch(function () {
+    return caches.match(req).then(function (hit) { return hit || (req.mode === "navigate" ? caches.match("index.html") : undefined); });
+  }));
+});
