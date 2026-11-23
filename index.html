@@ -493,6 +493,17 @@ html.big .chip, html.big .pill, html.big .range button, html.big .bigbtn, html.b
 html.big .chips { gap: 12px; }
 html.nowheel #stage, html.nowheel .prog { display: none !important; }
 
+/* Word list with meanings: a tidy two-column layout, word on the left and its meaning on the right */
+.chipitem { display: grid; grid-template-columns: minmax(0, 9.5rem) minmax(0, 1fr); align-items: center; gap: 12px; }
+.chipitem .chip { width: 100%; min-width: 0; text-align: center; }
+.chipdef { flex: none; font-size: 0.86rem; line-height: 1.35; }
+@media (max-width: 360px) { .chipitem { grid-template-columns: minmax(0, 9.5rem) minmax(0, 1fr); } }
+
+/* Undo: a real, but quiet, button (arrow kept) */
+#undo { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; min-height: 38px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); color: var(--ink); font-size: 0.86rem; font-weight: 600; text-decoration: none; opacity: 1; }
+#undo:hover { background: var(--chip, var(--surface)); }
+#undo:disabled { opacity: 0.4; }
+
 </style>
 </head>
 <body>
@@ -884,7 +895,7 @@ html.nowheel #stage, html.nowheel .prog { display: none !important; }
   if (settings.noWheel) document.documentElement.classList.add("nowheel");
   if (settings.motion === false) document.documentElement.classList.add("nomotion");
 
-  var ES = {}, ES_WORDS = {}, DEFS_ES = {};
+  var ES = {}, ES_WORDS = {}, DEFS_ES = {}, BDEFS_ES = {};
     ES = {
 "Name what you feel, then pick a next step.": "Nombra lo que sientes y elige un siguiente paso.",
 "Share": "Compartir",
@@ -1528,6 +1539,61 @@ html.nowheel #stage, html.nowheel .prog { display: none !important; }
 "Apathetic": "Que no te importa, o te importa muy poco.",
 "Indifferent": "Ni a favor ni en contra, sin un sentimiento fuerte."
 };
+  BDEFS_ES = {
+"Prepare": "Prepararte con tiempo para que una preocupación se sienta más manejable.",
+"Seek support": "Acudir a alguien de confianza, o a un profesional, para recibir respaldo.",
+"Plan": "Trazar pasos pequeños y concretos para lo que viene.",
+"Be cautious": "Ir más despacio y tener más cuidado antes de actuar.",
+"Reduce risk": "Cambiar algo para que disminuya la posibilidad de un daño.",
+"Ground yourself": "Volver al presente fijándote en lo que ves, oyes y tocas.",
+"Breathe": "Respirar despacio para ayudar a tu cuerpo a calmarse.",
+"Set boundaries": "Decidir qué es aceptable para ti y decirlo con claridad.",
+"Confront": "Abordar el problema o a la persona de frente, con calma y honestidad.",
+"Speak up": "Decir lo que piensas o necesitas en vez de callártelo.",
+"Express needs": "Decirle con claridad a los demás lo que necesitas de ellos.",
+"Walk away": "Salir de la situación hasta que te hayas calmado.",
+"Channel energy": "Llevar esa emoción intensa al movimiento o a una tarea útil.",
+"Problem-solve": "Definir el problema y recorrer posibles soluciones.",
+"Get space": "Tomarte tiempo a solas o a distancia para pensar con claridad.",
+"Redirect attention": "Llevar tu atención a algo que te ayude a reiniciarte.",
+"Practice patience": "Darles un poco más de tiempo a las cosas, y a ti.",
+"Avoid": "Mantenerte lejos de lo que te molesta, por ahora.",
+"Keep distance": "Dejar espacio entre tú y lo que te resulta desagradable.",
+"Cleanse": "Asearte, ordenar o renovar tu entorno.",
+"Let go": "Soltar lo que no puedes cambiar ni controlar.",
+"Speak honestly": "Decir lo que es cierto para ti, con amabilidad y sin culpar.",
+"Reframe": "Mirar la situación desde otro ángulo, más justo.",
+"Focus on solutions": "Poner tu energía en lo que se puede hacer, no en lo que salió mal.",
+"Choose differently": "Elegir otra opción la próxima vez, o ahora mismo.",
+"Find kindness": "Buscar u ofrecer un pequeño gesto de calidez.",
+"Be heard": "Compartir lo que sientes con alguien que te escuche.",
+"Find others": "Pasar tiempo con otras personas, en persona o por mensaje.",
+"Prioritize rest": "Poner el sueño y el descanso primero, no al final.",
+"Practice self-care": "Hacer algo suave que cuide tu cuerpo o tu mente.",
+"Find meaning": "Preguntarte qué puede enseñarte esta experiencia o qué importa en ella.",
+"Focus on health": "Cuidar el sueño, la comida, el movimiento y tus necesidades médicas.",
+"Ask for help": "Pedir ayuda y decir que te vendría bien una mano.",
+"Express feelings": "Poner lo que sientes en palabras, arte, música o escritura.",
+"Seek comfort": "Acudir a algo reconfortante, como una bebida caliente, una manta o un amigo.",
+"Reach out": "Contactar a alguien hoy, aunque sea con un mensaje breve.",
+"Enjoy the moment": "Ir más despacio y disfrutar de lo que se siente bien ahora.",
+"Take initiative": "Empezar algo por tu cuenta en vez de esperar.",
+"Pursue goals": "Usar esta energía para avanzar un paso hacia una meta.",
+"Spread positivity": "Compartir buenas noticias, un cumplido o una sonrisa.",
+"Show gratitude": "Agradecer a alguien, o reconocer lo que valoras.",
+"Help others": "Hacer algo que le facilite el día a otra persona.",
+"Learn": "Seguir tu interés y aprender algo nuevo.",
+"Explore": "Probar un lugar, una idea o una actividad nuevos.",
+"Be active": "Mover el cuerpo, ya sea con un paseo, estiramientos o ejercicio.",
+"Create": "Hacer algo, como escribir, dibujar, cocinar o construir.",
+"Connect": "Acercarte a personas o ideas que te interesan.",
+"Celebrate": "Marcar el momento, grande o pequeño.",
+"Stay curious": "Hacer preguntas y mantenerte abierto a lo que descubras.",
+"Seek clarity": "Aclarar qué está pasando y qué quieres realmente.",
+"Recenter": "Volver a tus valores y a lo que te da estabilidad.",
+"Refocus": "Elegir una cosa a la que dedicar tu atención ahora.",
+"Rest": "Hacer una pausa y dejar que tu cuerpo y tu mente se recuperen."
+};
 
   function t(s) { return (LANG === "es" && ES[s] !== undefined) ? ES[s] : s; }
   function tf(s, v) {
@@ -1538,6 +1604,62 @@ html.nowheel #stage, html.nowheel .prog { display: none !important; }
   function tagName(x) { return t(x); }
   function plural(n, one, many) { return n === 1 ? one : many; }
   function tw(w) { return (LANG === "es" && ES_WORDS[w] !== undefined) ? ES_WORDS[w] : w; }
+
+  var BDEFS = {
+    "Prepare": "Get ready ahead of time so a worry feels more manageable.",
+    "Seek support": "Turn to someone you trust, or a professional, for backing.",
+    "Plan": "Map out small, concrete steps for what comes next.",
+    "Be cautious": "Slow down and take extra care before you act.",
+    "Reduce risk": "Change something so the chance of harm gets smaller.",
+    "Ground yourself": "Come back to the present by noticing what you can see, hear and touch.",
+    "Breathe": "Slow your breathing to help your body settle.",
+    "Set boundaries": "Decide what is okay for you and say so clearly.",
+    "Confront": "Address the problem or person directly, calmly and honestly.",
+    "Speak up": "Say what you think or need instead of keeping it in.",
+    "Express needs": "Tell others plainly what you need from them.",
+    "Walk away": "Step out of the situation until you have cooled down.",
+    "Channel energy": "Put the strong feeling into movement or a useful task.",
+    "Problem-solve": "Name the problem and work through possible fixes.",
+    "Get space": "Take time alone or apart so you can think clearly.",
+    "Redirect attention": "Move your focus to something that helps you reset.",
+    "Practice patience": "Give things, and yourself, a little more time.",
+    "Avoid": "Stay away from what is bothering you, for now.",
+    "Keep distance": "Leave room between you and what feels unpleasant.",
+    "Cleanse": "Wash up, tidy up or refresh your surroundings.",
+    "Let go": "Release what you cannot change or control.",
+    "Speak honestly": "Say what is true for you, kindly and without blame.",
+    "Reframe": "Look at the situation from a different, fairer angle.",
+    "Focus on solutions": "Spend your energy on what can be done, not what went wrong.",
+    "Choose differently": "Pick another option next time, or right now.",
+    "Find kindness": "Look for, or offer, a small act of warmth.",
+    "Be heard": "Share what you feel with someone who will listen.",
+    "Find others": "Spend time with people, in person or by message.",
+    "Prioritize rest": "Make sleep and downtime the first thing, not the last.",
+    "Practice self-care": "Do something gentle that looks after your body or mind.",
+    "Find meaning": "Ask what this experience can teach you or what matters in it.",
+    "Focus on health": "Look after sleep, food, movement and medical needs.",
+    "Ask for help": "Reach out and say you could use a hand.",
+    "Express feelings": "Put what you feel into words, art, music or writing.",
+    "Seek comfort": "Turn to something soothing, like a warm drink, a blanket or a friend.",
+    "Reach out": "Contact someone today, even with a short message.",
+    "Enjoy the moment": "Slow down and soak in what feels good right now.",
+    "Take initiative": "Start something yourself instead of waiting.",
+    "Pursue goals": "Use this energy to move a goal one step forward.",
+    "Spread positivity": "Share good news, a compliment or a smile.",
+    "Show gratitude": "Thank someone, or notice what you appreciate.",
+    "Help others": "Do something that makes another person's day easier.",
+    "Learn": "Follow your interest and pick up something new.",
+    "Explore": "Try a new place, idea or activity.",
+    "Be active": "Move your body, whether a walk, a stretch or a workout.",
+    "Create": "Make something, such as writing, drawing, cooking or building.",
+    "Connect": "Reach toward people or ideas that interest you.",
+    "Celebrate": "Mark the moment, big or small.",
+    "Stay curious": "Ask questions and stay open to what you find out.",
+    "Seek clarity": "Sort out what is going on and what you actually want.",
+    "Recenter": "Return to your values and what steadies you.",
+    "Refocus": "Pick one thing to give your attention to next.",
+    "Rest": "Pause and let your body and mind recover.",
+  };
 
   var DEFS = {
     "Fearful": "Feeling threatened or unsafe, or worried about what might happen.",
@@ -1678,8 +1800,8 @@ html.nowheel #stage, html.nowheel .prog { display: none !important; }
   });
   function enOf(c, r, i) { var e = DATA[c].en; return r === 0 ? e.name : (r === 1 ? e.r2 : (r === 2 ? e.r3 : e.r4))[i]; }
   function defOf(c, r, i) {
-    if (r > 2) return "";
     var en = enOf(c, r, i);
+    if (r > 2) return (LANG === "es" && BDEFS_ES[en]) ? BDEFS_ES[en] : (BDEFS[en] || "");
     return (LANG === "es" && DEFS_ES[en]) ? DEFS_ES[en] : (DEFS[en] || "");
   }
 
@@ -2076,10 +2198,10 @@ html.nowheel #stage, html.nowheel .prog { display: none !important; }
     else if (cur.st === 1) chips = w.r2.map(function (l, i) { return chip(l, cur.c, 1, i); }).join("");
     else if (cur.st === 2) chips = w.r3.map(function (l, i) { return chip(l, cur.c, 2, i); }).join("");
     else chips = w.r4.map(function (l, i) { return chip(l, cur.c, 3, i); }).join("");
-    var defsOn = settings.defs && cur.st < 3;
+    var defsOn = true;
     out += chosenDefHTML(cur);
-    out += "<h3>" + esc(t("Choose one")) + "</h3>" + (cur.st < 3 ? defsToggleHTML() : "");
-    out += defsOn ? chipsWithDefs(cur.st === 0 ? DATA.map(function (d) { return d.name; }) : (cur.st === 1 ? w.r2 : w.r3), cur.st === 0 ? 0 : cur.c, cur.st) : '<div class="chips">' + chips + "</div>";
+    out += "<h3>" + esc(t("Choose one")) + "</h3>";
+    out += defsOn ? chipsWithDefs(cur.st === 0 ? DATA.map(function (d) { return d.name; }) : (cur.st === 1 ? w.r2 : (cur.st === 2 ? w.r3 : w.r4)), cur.st === 0 ? 0 : cur.c, cur.st) : '<div class="chips">' + chips + "</div>";
     out += doneButtonHTML(cur);
     if (cur.st >= 1) {
       out += ctxBlock(cur.j) +
@@ -2202,7 +2324,6 @@ html.nowheel #stage, html.nowheel .prog { display: none !important; }
     if (!b) return;
     if (b.dataset.newci || b.dataset.over) { startNew(); return; }
     if (b.dataset.done) { finishEarly(); return; }
-    if (b.dataset.defs) { settings.defs = !settings.defs; saveSettings(); renderCard(); return; }
     if (b.dataset.r !== undefined) choose(+b.dataset.c, +b.dataset.r, +b.dataset.i, true, false);
   });
   card.addEventListener("toggle", function (e) { if (e.target && e.target.id === "ctx") ctxOpen = e.target.open; }, true);
@@ -2714,12 +2835,9 @@ html.nowheel #stage, html.nowheel .prog { display: none !important; }
   /* ------------------------------------------------------------------ */
   /* Word meanings                                                       */
   /* ------------------------------------------------------------------ */
-  function defsToggleHTML() {
-    return '<button type="button" class="pill defsbtn" data-defs="1" aria-pressed="' + (settings.defs ? "true" : "false") + '">' +
-      esc(settings.defs ? t("Hide meanings") : t("Show meanings")) + "</button>";
-  }
   function chosenDefHTML(cur) {
-    if (cur.st < 1 || !cur.j || settings.defs) return "";
+    return "";  // meanings are always listed next to the words, so no separate line is needed
+    if (false) return "";
     var q = wordFor(cur.j.k[cur.j.k.length - 1]), d = q && defOf(q.c, q.r, q.i);
     return d ? '<p class="def"><b>' + esc(q.word) + ":</b> " + esc(d) + "</p>" : "";
   }
