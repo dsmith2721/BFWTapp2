@@ -409,6 +409,17 @@ main > section#dash, main > section#remind, main > section#yourdata { --acc: #5E
 .shapp i { overflow: hidden; }
 .shapp i svg { display: block; }
 
+/* List view removed; undo is a quiet link under the wheel; the "Show full wheel" button lives in the top bar */
+.tools { display: block; }
+.tools #toolsMsg { display: block; }
+.undorow { display: flex; justify-content: flex-end; margin: 4px 0 0; }
+#undo { background: none; border: 0; padding: 6px 8px; min-height: 36px; font-size: 0.8rem; font-weight: 500; color: var(--muted); text-decoration: underline; text-underline-offset: 3px; opacity: 0.85; }
+#undo:disabled { opacity: 0.35; text-decoration: none; cursor: default; }
+#statbar.zoomed > span:first-child { display: none; }
+#statbar.zoomed .sbtns { flex-wrap: wrap; justify-content: flex-end; }
+#backBtn { grid-column: auto; grid-row: auto; justify-self: auto; align-self: auto; }
+#statbar.zoomed #shareBtn .shtxt { display: none; }
+
 </style>
 </head>
 <body>
@@ -424,7 +435,7 @@ main > section#dash, main > section#remind, main > section#yourdata { --acc: #5E
 
 <div id="statbar">
   <span><strong id="barNum">0</strong> <span id="barLabel">check-ins</span></span>
-  <span class="sbtns"><button id="toTally" type="button">Tally</button><button id="toRemind" type="button">Reminders</button><button id="shareBtn" type="button" aria-haspopup="dialog"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg> Share</button></span>
+  <span class="sbtns"><button id="backBtn" type="button">Show full wheel</button><button id="toTally" type="button">Tally</button><button id="toRemind" type="button">Reminders</button><button id="shareBtn" type="button" aria-label="Share" aria-haspopup="dialog"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg> <span class="shtxt">Share</span></button></span>
 </div>
 
 <main>
@@ -448,10 +459,6 @@ main > section#dash, main > section#remind, main > section#yourdata { --acc: #5E
   </ol>
   <div class="tools">
     <span id="toolsMsg">Start in the middle: tap the feeling closest to yours.</span>
-    <span class="toolbtns">
-      <button id="viewBtn" type="button" class="pill">List view</button>
-      <button id="backBtn" type="button" class="pill">Back to full wheel</button>
-    </span>
   </div>
 
   <div id="stage" tabindex="0" aria-label="Feelings wheel">
@@ -459,6 +466,8 @@ main > section#dash, main > section#remind, main > section#yourdata { --acc: #5E
   </div>
 
   <button id="newBtn" type="button" class="bigbtn" hidden>Start a new check-in</button>
+
+  <div class="undorow"><button id="undo" type="button">↶ Undo</button></div>
 
   <section id="card" aria-live="polite"></section>
 
@@ -476,7 +485,6 @@ main > section#dash, main > section#remind, main > section#yourdata { --acc: #5E
     <div class="dashhead">
       <h2 id="dashTitle" tabindex="-1">Your tally</h2>
       <div class="actions">
-        <button id="undo" type="button">Undo</button>
         <button id="reset" type="button">Reset</button>
       </div>
     </div>
@@ -606,7 +614,6 @@ main > section#dash, main > section#remind, main > section#yourdata { --acc: #5E
   <label class="check"><input type="checkbox" id="setHc"> <span>Higher contrast</span></label>
   <label class="check"><input type="checkbox" id="setMotion"> <span>Reduce animations</span></label>
   <label class="check" id="setVibeRow"><input type="checkbox" id="setVibe"> <span>Vibrate when I tap a word</span></label>
-  <p class="note">Prefer the list to the wheel? Use &ldquo;List view&rdquo; above the wheel.</p>
 
   <h3 class="shh">Language and region</h3>
   <div class="remrow"><label for="setLang">Language</label>
@@ -821,6 +828,7 @@ main > section#dash, main > section#remind, main > section#yourdata { --acc: #5E
 "Back up your check-ins.": "Haz una copia de tus registros.",
 "Back up now": "Copiar ahora",
 "Your tally": "Tu registro",
+"↶ Undo": "↶ Deshacer",
 "Undo": "Deshacer",
 "Reset": "Borrar todo",
 "Today": "Hoy",
@@ -932,8 +940,8 @@ main > section#dash, main > section#remind, main > section#yourdata { --acc: #5E
 "Format": "Formato",
 "Paste a JSON backup here": "Pega aquí una copia JSON",
 "Check-in complete.": "Registro completo.",
-"Drag the wheel to look around.": "Arrastra la rueda para explorar.",
-"Show full wheel": "Ver rueda completa",
+"Pinch to zoom and drag to look around.": "Pellizca para acercar y arrastra para explorar.",
+"Show full wheel": "Rueda completa",
 "Zoom in": "Acercar",
 "Show wheel": "Ver rueda",
 "How strong is the feeling?": "¿Qué tan intensa es la emoción?",
@@ -1019,7 +1027,7 @@ main > section#dash, main > section#remind, main > section#yourdata { --acc: #5E
 "Patterns by day and time appear after about 5 check-ins in this period.": "Los patrones por día y hora aparecen tras unos 5 registros en este periodo.",
 "By day of the week": "Por día de la semana",
 "By time of day": "Por hora del día",
-"You chose “{w}”. Did it help?": "Elegiste “{w}”. ¿Te ayudó?",
+"Last time you chose “{w}”. Did it help?": "La última vez elegiste “{w}”. ¿Te ayudó?",
 "Did “{w}” help?": "¿Te ayudó “{w}”?",
 "helped {h} of {n}": "ayudó {h} de {n}",
 "Feelings summary": "Resumen de Feelings",
@@ -1771,7 +1779,7 @@ main > section#dash, main > section#remind, main > section#yourdata { --acc: #5E
   /* ---- zoom and view mode ---- */
   var FULL = [-505, -505, 1010, 1010];
   var vb = FULL.slice(), focus = null, anim = null, flashTimer = null;
-  var toolsMsg = $("toolsMsg"), backBtn = $("backBtn"), viewBtn = $("viewBtn"), newBtn = $("newBtn");
+  var toolsMsg = $("toolsMsg"), backBtn = $("backBtn"), newBtn = $("newBtn");
   newBtn.textContent = t("Start a new check-in");
   newBtn.addEventListener("click", function () { startNew(); });
   var keyItems = document.querySelectorAll(".prog li");
@@ -1781,7 +1789,7 @@ main > section#dash, main > section#remind, main > section#yourdata { --acc: #5E
     "Second ring: go deeper into that family with a more exact feeling.",
     "Third ring: get precise with the closest word for it.",
     "Outer ring: a healthy behavior response, an idea for what to do next."];
-  var listMode = lsGet("fw-view") === "list";
+  var listMode = false;
 
   function setVB(a) { vb = a; svg.setAttribute("viewBox", a.map(f).join(" ")); }
   function animateTo(target) {
@@ -1811,6 +1819,7 @@ main > section#dash, main > section#remind, main > section#yourdata { --acc: #5E
     var z = isZoomed() && !listMode;
     svg.classList.toggle("zoomed", z);
     backBtn.style.display = z ? "inline-block" : "none";
+    document.getElementById("statbar").classList.toggle("zoomed", z);
     backBtn.textContent = t("Show full wheel");
   }
   function isZoomed() { return focus !== null || vb[2] < FULL[2] - 2; }
@@ -1841,12 +1850,8 @@ main > section#dash, main > section#remind, main > section#yourdata { --acc: #5E
   }
   function applyMode() {
     document.body.classList.toggle("listmode", listMode);
-    viewBtn.textContent = listMode ? t("Show wheel") : t("List view");
     updateTools();
   }
-  viewBtn.addEventListener("click", function () {
-    listMode = !listMode; lsSet("fw-view", listMode ? "list" : "wheel"); applyMode();
-  });
   backBtn.addEventListener("click", function () {
     unfocus();
   });
@@ -2660,17 +2665,24 @@ main > section#dash, main > section#remind, main > section#yourdata { --acc: #5E
   /* Did the action help? (follow-through)                               */
   /* ------------------------------------------------------------------ */
   var FU = [["helped", "It helped"], ["some", "A little"], ["no", "Not really"], ["skip", "Didn’t try it"]];
+  /* Asked the next time the app is opened (not in the same visit), on the start screen, about the most recent unanswered check-in */
+  var visitStart = Date.now(), hiddenAt = 0;
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) { hiddenAt = Date.now(); return; }
+    if (hiddenAt && Date.now() - hiddenAt > 20 * 60e3) { visitStart = Date.now(); renderAll(); }
+  });
   function pendingFollow() {
     var now = Date.now(), best = null;
+    if (current().st !== 0) return null;
     tally.journeys.forEach(function (j) {
-      if (j.k.length === 4 && j.a == null && j.t != null && now - j.t >= 3600e3 && now - j.t <= 3 * 864e5) { if (!best || j.t > best.t) best = j; }
+      if (j.k.length === 4 && j.a == null && j.t != null && j.t < visitStart && now - j.t <= 7 * 864e5) { if (!best || j.t > best.t) best = j; }
     });
     return best;
   }
   function renderFollow() {
     var j = pendingFollow(), bar = $("followBar");
     bar.hidden = !j;
-    if (j) $("fuText").textContent = tf("You chose “{w}”. Did it help?", { w: wordFor(j.k[3]).word });
+    if (j) $("fuText").textContent = tf("Last time you chose “{w}”. Did it help?", { w: wordFor(j.k[3]).word });
   }
   $("followBar").addEventListener("click", function (e) {
     var b = e.target.closest("button[data-fu]"), j = pendingFollow();
