@@ -439,6 +439,27 @@ main > section#dash, main > section#remind, main > section#yourdata { display: f
 #dash > .backhome ~ .dashhead, #remind > .backhome ~ h2, #yourdata > .backhome ~ h2 { margin-top: 0; }
 #dash .stats strong, #dash .stats span { display: block; }
 
+/* Bottom tab bar (quiet) replaces the top bar; the check-in count lives in the header; the zoom reset floats on the wheel */
+#statbar { display: none; }
+#hdrCount { font-size: 0.82rem; opacity: 0.8; }
+#hdrCount strong { font-size: 0.9rem; }
+header .tag { display: block; }
+@media (max-width: 440px) { header .tag { display: none; } }
+#stage { position: relative; }
+#backBtn { position: absolute; top: 8px; right: 8px; z-index: 5; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; font-size: 0.78rem; font-weight: 700; min-height: 36px; box-shadow: 0 2px 8px -4px rgba(20,18,43,0.5); }
+#tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 25; display: flex; justify-content: space-around; background: var(--surface); border-top: 1px solid var(--line); padding: 4px max(8px, env(safe-area-inset-right, 0px)) calc(4px + env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px)); }
+#tabbar button { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 5px 2px 3px; min-height: 48px; background: none; border: 0; border-radius: 12px; color: var(--muted); font-size: 0.66rem; font-weight: 600; letter-spacing: 0.01em; }
+#tabbar button span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#tabbar button svg { display: block; opacity: 0.9; }
+#tabbar button[aria-current="page"] { color: var(--ink); }
+#tabbar button[aria-current="page"] svg { opacity: 1; }
+#tabbar button[aria-current="page"]::before { content: ""; position: absolute; }
+body { padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px)); }
+#updateBar { bottom: calc(58px + env(safe-area-inset-bottom, 0px)); padding-bottom: 10px; }
+body.locked #tabbar { visibility: hidden; }
+
+header #hdrCount { display: block !important; }
+
 </style>
 </head>
 <body>
@@ -446,16 +467,13 @@ main > section#dash, main > section#remind, main > section#yourdata { display: f
   <img id="hdrIcon" src="icon-192.png" alt="" width="40" height="40">
   <div class="grow">
     <h1>Feelwell</h1>
-    <p>Name what you feel, then pick a next step.</p>
+    <p class="tag">Name what you feel, then pick a next step.</p>
+    <p id="hdrCount"><strong id="barNum">0</strong> <span id="barLabel">check-ins</span></p>
   </div>
   <button id="setBtn" type="button" aria-label="Settings" aria-haspopup="dialog"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
   <button id="install" type="button">Install app</button>
 </header>
 
-<div id="statbar">
-  <span><strong id="barNum">0</strong> <span id="barLabel">check-ins</span></span>
-  <span class="sbtns"><button id="backBtn" type="button">Show full wheel</button><button id="toTally" type="button">Tally</button><button id="toRemind" type="button">Reminders</button><button id="toData" type="button">Data</button><button id="shareBtn" type="button" aria-label="Share" aria-haspopup="dialog"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg> <span class="shtxt">Share</span></button></span>
-</div>
 
 <main>
   <div id="remindBar" role="status" hidden>
@@ -481,6 +499,7 @@ main > section#dash, main > section#remind, main > section#yourdata { display: f
   </div>
 
   <div id="stage" tabindex="0" aria-label="Feelings wheel">
+    <button id="backBtn" type="button">Show full wheel</button>
     <svg id="wheel" viewBox="-505 -505 1010 1010" role="group" aria-label="Feelings wheel with four rings: core feeling, feeling, finer nuance and an idea for what to do"></svg>
   </div>
 
@@ -604,6 +623,15 @@ main > section#dash, main > section#remind, main > section#yourdata { display: f
   <p id="helpline"></p>
   <p class="credit">Adapted from &ldquo;The Feelings Wheel&rdquo; created by Dr. Gloria Willcox.</p>
 </footer>
+
+<nav id="tabbar" aria-label="Main">
+  <button id="toHome" type="button"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><circle cx="12" cy="12" r="5.8"/><circle cx="12" cy="12" r="2"/><path d="M12 2.5v3.2M12 18.3v3.2M2.5 12h3.2M18.3 12h3.2" stroke-linecap="round"/></svg><span>Wheel</span></button>
+  <button id="toTally" type="button"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Tally</span></button>
+  <button id="toRemind" type="button"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8M10 20a2 2 0 0 0 4 0"/></svg><span>Reminders</span></button>
+  <button id="toData" type="button"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg><span>Data</span></button>
+  <button id="shareBtn" type="button" aria-label="Share" aria-haspopup="dialog"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg> <span>Share</span></button>
+</nav>
+
 
 <dialog id="sumDlg" aria-labelledby="smTitle"><div class="dlgbody">
   <h2 id="smTitle">Summary</h2>
@@ -821,11 +849,12 @@ main > section#dash, main > section#remind, main > section#yourdata { display: f
 "Name what you feel, then pick a next step.": "Nombra lo que sientes y elige un siguiente paso.",
 "Share": "Compartir",
 "Data": "Datos",
+"Wheel": "Rueda",
 "← Back to the wheel": "← Volver a la rueda",
 "Install app": "Instalar app",
 "check-ins": "registros",
 "check-in": "registro",
-"Reminders": "Recordatorios",
+"Reminders": "Avisos",
 "Tally": "Registro",
 "Time for a check-in.": "Es hora de registrar cómo te sientes.",
 "How are you feeling right now?": "¿Cómo te sientes ahora mismo?",
@@ -1077,6 +1106,14 @@ main > section#dash, main > section#remind, main > section#yourdata { display: f
 "PIN lock turned on.": "Bloqueo con PIN activado.",
 "PIN lock turned off.": "Bloqueo con PIN desactivado.",
 "Get started": "Empezar",
+"Choose the feeling closest to yours.": "Elige la emoción más cercana a la tuya.",
+"Last step: choose something to try.": "Último paso: elige algo para probar.",
+"Last step: tap an idea for what to do next.": "Último paso: toca una idea de qué hacer después.",
+"Choose a more specific word.": "Elige una palabra más específica.",
+"Now tap a more specific word in the bright ring.": "Ahora toca una palabra más específica en el anillo iluminado.",
+"Press “Start a new check-in” to choose again.": "Toca “Empezar un registro nuevo” para elegir de nuevo.",
+"Start with a center word.": "Empieza con una palabra del centro.",
+"Choose a word in the lit-up ring.": "Elige una palabra en el anillo iluminado.",
 "core feeling": "emoción base",
 "feeling": "emoción",
 "shade": "matiz",
@@ -1842,7 +1879,6 @@ main > section#dash, main > section#remind, main > section#yourdata { display: f
     var z = isZoomed() && !listMode;
     svg.classList.toggle("zoomed", z);
     backBtn.style.display = z ? "inline-block" : "none";
-    document.getElementById("statbar").classList.toggle("zoomed", z);
     backBtn.textContent = t("Show full wheel");
   }
   function isZoomed() { return focus !== null || vb[2] < FULL[2] - 2; }
@@ -2301,10 +2337,12 @@ main > section#dash, main > section#remind, main > section#yourdata { display: f
   });
   /* Separate pages: wheel, Tally, Reminders, Data (a #hash keeps the phone's Back button working) */
   var PAGES = { tally: "toTally", remind: "toRemind", data: "toData" }, pageNow = "home";
+  $("toHome").addEventListener("click", function () { goPage("home"); });
   function showPage(p, quiet) {
     if (!PAGES[p]) p = "home";
     pageNow = p; document.body.setAttribute("data-page", p);
     Object.keys(PAGES).forEach(function (k) { var b = $(PAGES[k]); if (b) b.setAttribute("aria-current", k === p ? "page" : "false"); });
+    $("toHome").setAttribute("aria-current", p === "home" ? "page" : "false");
     if (!quiet) window.scrollTo(0, 0);
     if (p === "home") { try { renderAll(); } catch (e) {} }
   }
