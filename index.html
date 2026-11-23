@@ -357,7 +357,7 @@ body.locked > *:not(#lock) { visibility: hidden; }
 :root.hc { --muted: var(--ink); --line: var(--ink); }
 :root.hc .seg path { stroke-width: 2.4; }
 :root.nomotion *, :root.nomotion *::before, :root.nomotion *::after { animation: none !important; transition: none !important; }
-footer #helpline a { color: inherit; }
+#helpline a { color: inherit; }
 @media (max-width: 440px) { header p { display: none; } }
 #card + .notebar { margin-top: 14px; }
 
@@ -468,11 +468,11 @@ dialog::backdrop { background: var(--scrim); }
 #setBtn:hover, #helpBtn:hover { background: rgba(255,255,255,.2); }
 #helpBtn { margin-right: -4px; }
 
-footer #helpline { display: flex; flex-direction: column; align-items: center; gap: 6px; max-width: 420px; margin: 8px auto 0; padding: 14px 16px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); }
-footer #helpline .hl-label { font-size: 0.78rem; color: var(--muted); }
-footer #helpline .hl-main { font-weight: 700; color: var(--ink); font-size: 0.92rem; text-decoration: none; }
-footer #helpline a.hl-main { text-decoration: underline; text-underline-offset: 3px; }
-footer #helpline .hl-more { font-size: 0.74rem; color: var(--muted); }
+#helpline { display: flex; flex-direction: column; align-items: center; gap: 6px; max-width: 420px; margin: 8px auto 0; padding: 14px 16px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); }
+#helpline .hl-label { font-size: 0.78rem; color: var(--muted); }
+#helpline .hl-main { font-weight: 700; color: var(--ink); font-size: 0.92rem; text-decoration: none; }
+#helpline a.hl-main { text-decoration: underline; text-underline-offset: 3px; }
+#helpline .hl-more { font-size: 0.74rem; color: var(--muted); }
 
 
 header h1 .beta { font-size: 0.62em; font-weight: 600; opacity: 0.7; letter-spacing: 0.02em; margin-left: 2px; }
@@ -515,6 +515,16 @@ html.nowheel #stage, html.nowheel .prog { display: none !important; }
 #dash #weekHead { margin-top: 24px; }
 #dash h3[hidden], #remind h3[hidden] { display: none; }
 
+/* Tally and Reminders: strong, solid section headings */
+#dash h3, #remind h3 {
+  margin: 44px -16px 16px; padding: 15px 16px; border: 0; border-left: 0;
+  background: var(--acc); color: #fff;
+  font-size: 1.2rem; font-weight: 800; letter-spacing: 0.02em; text-transform: none; line-height: 1.2;
+  box-shadow: 0 -10px 0 0 color-mix(in srgb, var(--acc) 12%, var(--bg));
+}
+#dash #weekHead { margin-top: 30px; }
+:root.hc #dash h3, :root.hc #remind h3 { background: var(--ink); color: var(--bg); }
+
 </style>
 </head>
 <body>
@@ -540,7 +550,7 @@ html.nowheel #stage, html.nowheel .prog { display: none !important; }
   <div id="ioshint">To install on iPhone or iPad: tap the Share button, then choose Add to Home Screen.</div>
 
   <div id="hint" role="note">
-    <p><strong>New here?</strong> Start in the middle and work outward. Each ring is a little more specific. Everything you tap is saved to your tally.</p>
+    <p><strong>New here?</strong> Start in the center and work outward. Each ring is a little more specific. Everything you tap is saved to your tally.</p>
     <button id="hintOk" type="button">Got it</button>
   </div>
 
@@ -551,7 +561,7 @@ html.nowheel #stage, html.nowheel .prog { display: none !important; }
     <li><button type="button" data-ring="3" aria-pressed="false"><i></i><span><b>4</b> Healthy behavior response</span></button></li>
   </ol>
   <div class="tools">
-    <span id="toolsMsg">Start in the middle: tap the feeling closest to yours.</span>
+    <span id="toolsMsg">Start in the center: tap the feeling closest to yours.</span>
   </div>
 
   <div id="stage" tabindex="0" aria-label="Feelings wheel">
@@ -678,9 +688,6 @@ html.nowheel #stage, html.nowheel .prog { display: none !important; }
   </section>
 </main>
 
-<footer>
-  <p id="helpline"></p>
-</footer>
 
 <nav id="tabbar" aria-label="Main">
   <button id="toHome" type="button"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><circle cx="12" cy="12" r="5.8"/><circle cx="12" cy="12" r="2"/><path d="M12 2.5v3.2M12 18.3v3.2M2.5 12h3.2M18.3 12h3.2" stroke-linecap="round"/></svg><span>Wheel</span></button>
@@ -730,6 +737,8 @@ html.nowheel #stage, html.nowheel .prog { display: none !important; }
   <div class="remrow"><label for="setLang">Language</label>
     <select id="setLang"><option value="en">English</option><option value="es">Español</option></select></div>
   <div class="remrow"><label for="setCountry">Country for the help line</label><select id="setCountry"></select></div>
+  <h3 class="shh">If you need help now</h3>
+  <p id="helpline"></p>
 
   <h3 class="shh">PIN lock</h3>
   <p class="note">A PIN keeps casual snoopers out of the app. It does not encrypt your check-ins.</p>
@@ -925,13 +934,13 @@ html.nowheel #stage, html.nowheel .prog { display: none !important; }
 "Later": "Más tarde",
 "To install on iPhone or iPad: tap the Share button, then choose Add to Home Screen.": "Para instalar en iPhone o iPad: toca el botón Compartir y elige Añadir a pantalla de inicio.",
 "New here?": "¿Primera vez?",
-"Start in the middle and work outward. Each ring is a little more specific. Everything you tap is saved to your tally.": "Empieza por el centro y avanza hacia afuera. Cada anillo es un poco más específico. Todo lo que toques se guarda en tu registro.",
+"Start in the center and work outward. Each ring is a little more specific. Everything you tap is saved to your tally.": "Empieza por el centro y avanza hacia afuera. Cada anillo es un poco más específico. Todo lo que toques se guarda en tu registro.",
 "Got it": "Entendido",
 "Core feeling": "Emoción base",
 "Go deeper": "Profundiza",
 "Get precise": "Sé preciso",
 "Healthy behavior response": "Respuesta saludable",
-"Start in the middle: tap the feeling closest to yours.": "Empieza por el centro: toca la emoción más cercana a la tuya.",
+"Start in the center: tap the feeling closest to yours.": "Empieza por el centro: toca la emoción más cercana a la tuya.",
 "List view": "Ver lista",
 "Back to full wheel": "Volver a la rueda completa",
 "How did it go?": "¿Cómo te fue?",
@@ -1202,7 +1211,7 @@ html.nowheel #stage, html.nowheel .prog { display: none !important; }
 "Other": "Otro",
 "Welcome to Feelwell": "Te damos la bienvenida a Feelwell",
 "Name what you feel in a few quick taps, then pick a healthy next step. No account needed.": "Nombra lo que sientes con unos toques y elige un siguiente paso saludable. No necesitas cuenta.",
-"Start in the middle": "Empieza por el centro",
+"Start in the center": "Empieza por el centro",
 "Tap a core feeling at the center of the wheel. Each step moves one ring outward and gets more specific. You can tap “I’m done” any time after step 2.": "Toca una emoción base en el centro de la rueda. Cada paso avanza un anillo hacia afuera y es más específico. Puedes tocar “Listo” en cualquier momento después del paso 2.",
 "Make it a habit": "Hazlo un hábito",
 "Set a reminder, look for patterns in your tally, and back up your history now and then. Check-ins are saved on this phone.": "Configura un recordatorio, busca patrones en tu registro y haz copias de vez en cuando. Los registros se guardan en este teléfono.",
@@ -1239,6 +1248,7 @@ html.nowheel #stage, html.nowheel .prog { display: none !important; }
 "Come back often": "Vuelve a menudo",
 "Your check-ins stay on this phone. Set a reminder and watch your week take shape.": "Tus registros se quedan en este teléfono. Activa un aviso y mira cómo toma forma tu semana.",
 "Main": "Principal",
+"If you need help now": "Si necesitas ayuda ahora",
 "Download file": "Descargar archivo"
 };
   ES_WORDS = {
@@ -2077,7 +2087,7 @@ html.nowheel #stage, html.nowheel .prog { display: none !important; }
   function updateTools() {
     var cur = current();
     toolsMsg.textContent = cur.st === 0
-      ? t("Start in the middle: tap the feeling closest to yours.")
+      ? t("Start in the center: tap the feeling closest to yours.")
       : cur.st === 4 ? ""
       : cur.st === 3 ? t("Last step: tap an idea for what to do next.")
       : t("Now tap a more specific word in the bright ring.");
@@ -3203,7 +3213,7 @@ html.nowheel #stage, html.nowheel .prog { display: none !important; }
   /* ------------------------------------------------------------------ */
   var TOUR = [
     ["Welcome to Feelwell", "Name what you feel in a few quick taps, then pick a healthy next step."],
-    ["Start in the middle", "Tap a core feeling at the center. Each step moves one ring out and gets more specific."],
+    ["Start in the center", "Tap a core feeling at the center. Each step moves one ring out and gets more specific."],
     ["Come back often", "Your check-ins stay on this phone. Set a reminder and watch your week take shape."]
   ];
   var tourIdx = 0;
