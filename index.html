@@ -11,8 +11,8 @@
 <meta name="apple-mobile-web-app-title" content="Feelings">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon-180.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon-180.png">
 <style>
 /* Layout: one calm column (820px max). A navy header and sticky tally bar in the icon's deep navy, then the wheel, the step card and the tally dashboard stacked beneath. */
 :root {
@@ -50,7 +50,7 @@ html { scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 56px); backgroun
 *, *::before, *::after { box-sizing: border-box; }
 body {
   margin: 0; min-height: 100dvh; background: var(--bg); color: var(--ink);
-  font-family: var(--font); font-size: 16px; line-height: 1.45; -webkit-text-size-adjust: 100%;
+  font-family: var(--font); font-size: 1rem; line-height: 1.45; -webkit-text-size-adjust: 100%;
 }
 /* Keeps the status-bar area filled when the tally bar sticks to the top */
 body::before {
@@ -279,24 +279,112 @@ footer .credit { max-width: 60ch; margin: 10px auto 0; font-size: 0.72rem; }
 .seg.pvon path { stroke-width: 3; stroke: #fff; }
 .seg.pvoff { opacity: 0.3; }
 
+#wheel.zoomed { touch-action: none; cursor: grab; }
+#wheel.zoomed.panning { cursor: grabbing; }
+
+#statbar .sbtns { display: flex; gap: 8px; }
+#remindBar { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; margin: 0 0 10px; padding: 10px 12px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); border-left: 5px solid var(--focus); font-size: 0.92rem; }
+#remindBar[hidden] { display: none; }
+#remindBar p { margin: 0; flex: 1 1 200px; min-width: 0; }
+#remindBar .rbtns { display: flex; gap: 8px; }
+#remind { margin-top: 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 16px 16px 18px; scroll-margin-top: 64px; }
+#remind h2 { margin: 0 0 4px; font-size: 1.25rem; }
+#remind h3 { margin: 16px 0 8px; font-size: 0.95rem; color: var(--muted); font-weight: 600; }
+#remind .note { margin: 0 0 12px; }
+.plans { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.plans button { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left; min-height: 56px; padding: 10px 12px; border-radius: 14px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); }
+.plans button b { font-size: 0.95rem; }
+.plans button span { font-size: 0.78rem; color: var(--muted); }
+.plans button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.plans button[aria-pressed="true"] span { color: var(--bg); opacity: 0.8; }
+.remrow { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin: 14px 0 0; font-weight: 600; font-size: 0.92rem; }
+.remrow[hidden], #remOpts[hidden] { display: none; }
+.remrow select, .remrow input { min-height: 44px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); color: var(--ink); font: inherit; font-size: 16px; }
+.remsum { margin: 12px 0 0; padding: 10px 12px; border-radius: 12px; background: var(--bg); border: 1px solid var(--line); font-weight: 700; font-size: 0.92rem; }
+.remsum:empty { display: none; }
+#remind .check { display: flex; align-items: flex-start; gap: 10px; font-size: 0.92rem; min-height: 44px; }
+#remind .check input { width: 22px; height: 22px; margin-top: 1px; flex: none; }
+.remcal { margin-top: 12px; }
+.remcal .pill { margin-bottom: 8px; }
+
+#shareBtn, #shareBtn:visited { display: inline-flex; align-items: center; gap: 6px; background: #fff; color: #14122B; border: 0; border-radius: 999px; padding: 8px 14px; font-weight: 700; font-size: 0.85rem; min-height: 44px; flex: none; }
+.shlink { display: flex; gap: 8px; align-items: center; margin: 12px 0 0; }
+.shlink input { flex: 1; min-width: 0; min-height: 44px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); color: var(--ink); font: inherit; font-size: 16px; }
+.shh { margin: 16px 0 6px; font-size: 0.95rem; color: var(--muted); font-weight: 600; }
+.shgrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.shapp { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 4px; min-height: 44px; border: 1px solid var(--line); border-radius: 14px; background: var(--bg); color: var(--ink); text-decoration: none; font-size: 0.8rem; font-weight: 600; text-align: center; }
+.shapp i { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; color: #fff; font-style: normal; font-weight: 800; font-size: 1rem; }
+.shapp span { line-height: 1.15; }
+dialog { overflow-y: auto; }
+
+footer .privacy { padding: 10px 12px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); color: var(--ink); }
+
+/* Features: settings, notes, follow-up, patterns, lock, tour */
+#setBtn { display: inline-grid; place-items: center; width: 44px; height: 44px; flex: none; background: #fff; color: #14122B; border: 0; border-radius: 999px; }
+.notebar { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; margin: 0 0 10px; padding: 10px 12px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); border-left: 5px solid var(--focus); font-size: 0.92rem; }
+.notebar[hidden] { display: none; }
+.notebar p { margin: 0; flex: 1 1 200px; min-width: 0; }
+.notebar .rbtns { display: flex; flex-wrap: wrap; gap: 8px; }
+#remindBar .rbtns { flex-wrap: wrap; }
+.bigbtn.alt { margin-top: 14px; background: var(--surface); color: var(--ink); border: 2px solid var(--ink); }
+.donehint { margin: 6px 0 0; text-align: center; }
+.def { margin: 4px 0 8px; padding: 8px 12px; border-radius: 12px; background: var(--bg); border: 1px solid var(--line); font-size: 0.92rem; }
+.defsbtn { margin: 0 0 10px; min-height: 40px; padding: 6px 14px; font-size: 0.85rem; }
+.defsbtn[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.chips.defs { display: grid; grid-template-columns: 1fr; gap: 10px; }
+.chipitem { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 12px; }
+.chipitem .chip { flex: none; min-width: 7.5rem; text-align: center; }
+.chipdef { flex: 1 1 11rem; min-width: 0; font-size: 0.88rem; color: var(--muted); }
+.streak { margin: 0 0 6px; font-size: 1rem; }
+.streak b { font-size: 1.5rem; }
+#patterns h4 { margin: 14px 0 6px; font-size: 0.9rem; color: var(--muted); font-weight: 600; }
+.wrapmono { white-space: pre-wrap; font-family: inherit; font-size: 15px; min-height: 220px; }
+.check { display: flex; align-items: flex-start; gap: 10px; margin: 12px 0 0; font-size: 0.95rem; min-height: 44px; }
+.check input { width: 22px; height: 22px; margin-top: 1px; flex: none; }
+.tourdots { display: flex; gap: 6px; margin: 0 0 12px; }
+.tourdots i { width: 22px; height: 5px; border-radius: 3px; background: var(--line); }
+.tourdots i.on { background: var(--ink); }
+.tour h2 { font-size: 1.5rem; margin: 0 0 8px; }
+.tourbody { margin: 0 0 8px; font-size: 1.05rem; color: var(--muted); }
+#lock { position: fixed; inset: 0; z-index: 500; background: var(--bg); display: grid; place-items: center; padding: 24px; overflow: auto; }
+#lock[hidden] { display: none; }
+body.locked { overflow: hidden; }
+body.locked > *:not(#lock) { visibility: hidden; }
+.lockbox { width: min(360px, 100%); display: flex; flex-direction: column; gap: 10px; }
+.lockbox h2 { margin: 0 0 4px; font-size: 1.5rem; }
+.lockl { font-weight: 700; }
+.lockbox input { min-height: 52px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); color: var(--ink); font-size: 24px; letter-spacing: 0.3em; text-align: center; }
+:root.hc { --muted: var(--ink); --line: var(--ink); }
+:root.hc .seg path { stroke-width: 2.4; }
+:root.nomotion *, :root.nomotion *::before, :root.nomotion *::after { animation: none !important; transition: none !important; }
+footer #helpline a { color: inherit; }
+@media (max-width: 440px) { header p { display: none; } }
+#card + .notebar { margin-top: 14px; }
+
 </style>
 </head>
 <body>
 <header>
-  <img id="hdrIcon" src="icons/icon-192.png" alt="" width="40" height="40">
+  <img id="hdrIcon" src="icon-192.png" alt="" width="40" height="40">
   <div class="grow">
     <h1>Feelings Wheel</h1>
     <p>Name what you feel, then pick a next step.</p>
   </div>
+  <button id="shareBtn" type="button" aria-haspopup="dialog"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg> Share</button>
+  <button id="setBtn" type="button" aria-label="Settings" aria-haspopup="dialog"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
   <button id="install" type="button">Install app</button>
 </header>
 
 <div id="statbar">
   <span><strong id="barNum">0</strong> <span id="barLabel">check-ins</span></span>
-  <button id="toTally" type="button">View tally</button>
+  <span class="sbtns"><button id="toRemind" type="button">Reminders</button><button id="toTally" type="button">Tally</button></span>
 </div>
 
 <main>
+  <div id="remindBar" role="status" hidden>
+    <p><strong>Time for a check-in.</strong> How are you feeling right now?</p>
+    <span class="rbtns"><button type="button" id="rbNow" class="pill primary">Check in</button><button type="button" id="rbSnooze" class="pill">In 1 hour</button><button type="button" id="rbLater" class="pill">Later</button></span>
+  </div>
   
   <div id="ioshint">To install on iPhone or iPad: tap the Share button, then choose Add to Home Screen.</div>
 
@@ -324,6 +412,16 @@ footer .credit { max-width: 60ch; margin: 10px auto 0; font-size: 0.72rem; }
   </div>
 
   <section id="card" aria-live="polite"></section>
+
+  <div id="followBar" class="notebar" role="status" hidden>
+    <p><strong>How did it go?</strong> <span id="fuText"></span></p>
+    <span class="rbtns"><button type="button" class="pill" data-fu="helped">It helped</button><button type="button" class="pill" data-fu="some">A little</button><button type="button" class="pill" data-fu="no">Not really</button><button type="button" class="pill" data-fu="skip">Didn&rsquo;t try it</button></span>
+  </div>
+  <div id="backupBar" class="notebar" role="status" hidden>
+    <p><strong>Back up your check-ins.</strong> <span id="bkText"></span></p>
+    <span class="rbtns"><button type="button" id="bkBarNow" class="pill primary">Back up now</button><button type="button" id="bkBarLater" class="pill">Later</button></span>
+  </div>
+
 
   <section id="dash" aria-labelledby="dashTitle">
     <div class="dashhead">
@@ -353,12 +451,17 @@ footer .credit { max-width: 60ch; margin: 10px auto 0; font-size: 0.72rem; }
     <div id="chart" class="chart" role="img" aria-label="Check-ins per day"></div>
     <p id="chartNote" class="note"></p>
 
+    <h3 id="patHead">Patterns</h3>
+    <div id="patterns"></div>
+
     <h3 id="barsHead">By core feeling</h3>
     <div id="bars"></div>
     <h3 id="topHead">Most logged feelings</h3>
     <ol id="top" class="toplist"></ol>
     <h3 id="actHead">Actions you chose</h3>
     <ol id="acts" class="toplist"></ol>
+    <h3 id="helpHead">What helped</h3>
+    <ol id="helped" class="toplist"></ol>
 
     <h3 id="histHead">History</h3>
     <ul id="hist" class="hist"></ul>
@@ -367,17 +470,144 @@ footer .credit { max-width: 60ch; margin: 10px auto 0; font-size: 0.72rem; }
 
     <h3>Your data</h3>
     <div class="actions">
+      <button id="bkNow" type="button">Back up now</button>
+      <button id="sumBtn" type="button">Summary</button>
       <button id="exportBtn" type="button">Export</button>
       <button id="importBtn" type="button">Import</button>
     </div>
+    <p id="bkLine" class="note"></p>
     <p class="note">Check-ins are saved only on this device. Export a backup now and then so a cleared browser or a new phone doesn't wipe them.</p>
+  </section>
+
+  <section id="remind" aria-labelledby="remTitle">
+    <h2 id="remTitle" tabindex="-1">Check-in reminders</h2>
+    <p class="note">Checking in a little and often works best. Choose how often you would like a nudge.</p>
+
+    <div class="plans" id="plans" role="group" aria-label="How often">
+      <button type="button" data-m="off" aria-pressed="true"><b>No reminders</b><span>Check in whenever you like</span></button>
+      <button type="button" data-m="hourly" aria-pressed="false"><b>Every hour</b><span>During your waking hours</span></button>
+      <button type="button" data-m="3h" aria-pressed="false"><b>Every 3 hours</b><span>During your waking hours</span></button>
+      <button type="button" data-m="6h" aria-pressed="false"><b>Every 6 hours</b><span>About 3 times a day</span></button>
+      <button type="button" data-m="daily" aria-pressed="false"><b>Once a day</b><span>At a time you pick</span></button>
+      <button type="button" data-m="weekly" aria-pressed="false"><b>Once a week</b><span>On a day you pick</span></button>
+    </div>
+
+    <div id="remOpts" hidden>
+      <div class="remrow" id="rowWake">
+        <label for="remStart">Waking hours: from</label>
+        <select id="remStart"></select>
+        <label for="remEnd">to</label>
+        <select id="remEnd"></select>
+      </div>
+      <div class="remrow" id="rowDay" hidden>
+        <label for="remDay">Day</label>
+        <select id="remDay"></select>
+      </div>
+      <div class="remrow" id="rowTime" hidden>
+        <label for="remTime">Time</label>
+        <input type="time" id="remTime" value="09:00">
+      </div>
+      <p id="remSummary" class="remsum" aria-live="polite"></p>
+
+      <h3>How you will be reminded</h3>
+      <label class="check"><input type="checkbox" id="remInapp" checked> <span>Show a banner here when a check-in is due and the app is open</span></label>
+      <div class="remcal">
+        <button type="button" id="icsBtn" class="pill primary">Add to my calendar</button>
+        <p class="note">Phones only allow timed alerts from your calendar app. Adding this to your calendar is the most reliable way to get a notification, even when the app is closed.</p>
+      </div>
+    </div>
   </section>
 </main>
 
 <footer>
-  <p>If you are struggling or in crisis, call or text <a href="tel:988">988</a> (US Suicide &amp; Crisis Lifeline).</p>
+  <p id="helpline"></p>
   <p class="credit">Adapted from &ldquo;The Feelings Wheel&rdquo; created by Dr. Gloria Willcox.</p>
 </footer>
+
+<dialog id="sumDlg" aria-labelledby="smTitle"><div class="dlgbody">
+  <h2 id="smTitle">Summary</h2>
+  <p class="note">A short summary you can show a therapist, coach or doctor. Notes are left out unless you choose to include them.</p>
+  <div class="range" role="group" aria-label="Time range">
+    <button type="button" data-sr="7" aria-pressed="true">7 days</button>
+    <button type="button" data-sr="30" aria-pressed="false">30 days</button>
+    <button type="button" data-sr="all" aria-pressed="false">All time</button>
+  </div>
+  <label class="check"><input type="checkbox" id="sumNotes"> <span>Include my notes</span></label>
+  <label class="sr" for="sumText">Summary text</label>
+  <textarea id="sumText" class="mono wrapmono" readonly rows="12"></textarea>
+  <p id="sumStatus" class="note" role="status"></p>
+  <div class="dlgactions">
+    <button type="button" id="sumCopy" class="pill primary">Copy</button>
+    <button type="button" id="sumShare" class="pill" hidden>Share</button>
+    <span class="spacer"></span>
+    <button type="button" class="pill" data-close>Close</button>
+  </div>
+</div></dialog>
+
+<dialog id="setDlg" aria-labelledby="setTitle"><div class="dlgbody">
+  <h2 id="setTitle">Settings</h2>
+  <h3 class="shh">Text size</h3>
+  <div class="range" role="group" aria-label="Text size">
+    <button type="button" data-ts="100" aria-pressed="true">Standard</button>
+    <button type="button" data-ts="115" aria-pressed="false">Large</button>
+    <button type="button" data-ts="130" aria-pressed="false">Larger</button>
+  </div>
+  <label class="check"><input type="checkbox" id="setHc"> <span>Higher contrast</span></label>
+  <label class="check"><input type="checkbox" id="setMotion"> <span>Reduce animations</span></label>
+  <label class="check" id="setVibeRow"><input type="checkbox" id="setVibe"> <span>Vibrate when I tap a word</span></label>
+  <p class="note">Prefer the list to the wheel? Use &ldquo;List view&rdquo; above the wheel.</p>
+
+  <h3 class="shh">Language and region</h3>
+  <div class="remrow"><label for="setLang">Language</label>
+    <select id="setLang"><option value="en">English</option><option value="es">Español</option></select></div>
+  <div class="remrow"><label for="setCountry">Country for the help line</label><select id="setCountry"></select></div>
+
+  <h3 class="shh">PIN lock</h3>
+  <p class="note">A PIN keeps casual snoopers out of the app. It does not encrypt your check-ins.</p>
+  <p id="pinState" class="note"></p>
+  <form id="pinOn" class="remrow" autocomplete="off">
+    <label for="pinNew">New PIN</label>
+    <input id="pinNew" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off">
+    <button type="submit" class="pill primary">Turn on PIN lock</button>
+  </form>
+  <form id="pinOff" class="remrow" autocomplete="off" hidden>
+    <label for="pinCur">Current PIN</label>
+    <input id="pinCur" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off">
+    <button type="submit" class="pill">Turn off PIN lock</button>
+  </form>
+  <p id="pinMsg" class="note" role="status"></p>
+
+  <div class="dlgactions">
+    <button type="button" id="setTour" class="pill">Show the tutorial</button>
+    <span class="spacer"></span>
+    <button type="button" class="pill primary" data-close>Done</button>
+  </div>
+</div></dialog>
+
+<dialog id="tourDlg" aria-labelledby="tourTitle"><div class="dlgbody tour">
+  <div id="tourDots" class="tourdots" aria-hidden="true"></div>
+  <h2 id="tourTitle"></h2>
+  <p id="tourBody" class="tourbody"></p>
+  <div class="dlgactions">
+    <button type="button" id="tourSkip" class="pill">Skip</button>
+    <span class="spacer"></span>
+    <button type="button" id="tourBack" class="pill">Back</button>
+    <button type="button" id="tourNext" class="pill primary">Next</button>
+  </div>
+</div></dialog>
+
+<div id="lock" role="dialog" aria-modal="true" aria-labelledby="lockTitle" hidden>
+  <form id="lockForm" class="lockbox" autocomplete="off">
+    <h2 id="lockTitle">Feelings is locked</h2>
+    <label for="lockPin" class="lockl">Enter your PIN</label>
+    <input id="lockPin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off">
+    <button type="submit" class="bigbtn">Unlock</button>
+    <p id="lockMsg" class="note" role="alert"></p>
+    <details class="ctx"><summary>Forgot your PIN?</summary>
+      <div class="ctxbody"><p class="note">The only way in is to erase everything saved in this app, including your check-ins.</p>
+      <button type="button" id="lockWipe" class="pill">Erase everything and unlock</button></div></details>
+  </form>
+</div>
 
 <dialog id="editDlg" aria-labelledby="edTitle"><div class="dlgbody">
   <h2 id="edTitle">Edit check-in</h2>
@@ -388,6 +618,21 @@ footer .credit { max-width: 60ch; margin: 10px auto 0; font-size: 0.72rem; }
     <span class="spacer"></span>
     <button type="button" class="pill primary" data-close>Done</button>
   </div>
+</div></dialog>
+
+<dialog id="shareDlg" aria-labelledby="shTitle"><div class="dlgbody">
+  <h2 id="shTitle">Share Feelings</h2>
+  <p class="note">Send a friend a link to this app. Only the link is shared. Your check-ins are never included.</p>
+  <button type="button" id="shNative" class="bigbtn" hidden>Share with your phone&rsquo;s apps</button>
+  <div class="shlink"><label class="sr" for="shUrl">App link</label><input id="shUrl" type="text" readonly>
+    <button type="button" id="shCopy" class="pill primary">Copy link</button></div>
+  <p id="shStatus" class="note" role="status"></p>
+  <h3 class="shh">Send with</h3>
+  <div class="shgrid" id="shGrid"></div>
+  <h3 class="shh">Copy, then paste in the app</h3>
+  <p class="note">These apps do not accept a shared link from a web page. Tap one to copy the message, then paste it into a chat or post.</p>
+  <div class="shgrid" id="shPaste"></div>
+  <div class="dlgactions"><span class="spacer"></span><button type="button" class="pill" data-close>Close</button></div>
 </div></dialog>
 
 <dialog id="exportDlg" aria-labelledby="exTitle"><div class="dlgbody">
@@ -473,11 +718,821 @@ footer .credit { max-width: 60ch; margin: 10px auto 0; font-size: 0.72rem; }
   ];
   var TAGS = ["Work", "Family", "Friends", "Health", "Money", "Sleep", "School", "Other"];
   var RING_NAMES = ["core feeling", "feeling", "shade", "action"];
+    /* ------------------------------------------------------------------ */
+  /* Settings and language                                               */
+  /* ------------------------------------------------------------------ */
+  var SET_KEY = "fw-settings";
+  var settings = { text: 100, hc: false, motion: true, vibrate: false, country: "", lang: "", defs: false };
+  try {
+    var ss = JSON.parse(lsGet(SET_KEY) || "null");
+    if (ss && typeof ss === "object") for (var sk in settings) if (ss[sk] !== undefined) settings[sk] = ss[sk];
+  } catch (e) {}
+  function saveSettings() { lsSet(SET_KEY, JSON.stringify(settings)); }
+  var NAVLANG = String((navigator.languages && navigator.languages[0]) || navigator.language || "en").toLowerCase();
+  var LANG = (settings.lang === "es" || settings.lang === "en") ? settings.lang : (NAVLANG.indexOf("es") === 0 ? "es" : "en");
+  var LOCALE = LANG === "es" ? "es" : undefined;
+  document.documentElement.setAttribute("lang", LANG);
+  document.documentElement.style.fontSize = (settings.text || 100) + "%";
+  if (settings.hc) document.documentElement.classList.add("hc");
+  if (settings.motion === false) document.documentElement.classList.add("nomotion");
+
+  var ES = {}, ES_WORDS = {}, DEFS_ES = {};
+    ES = {
+"Feelings Wheel": "Rueda de emociones",
+"Name what you feel, then pick a next step.": "Nombra lo que sientes y elige un siguiente paso.",
+"Share": "Compartir",
+"Install app": "Instalar app",
+"check-ins": "registros",
+"check-in": "registro",
+"Reminders": "Recordatorios",
+"Tally": "Registro",
+"Time for a check-in.": "Es hora de registrar cómo te sientes.",
+"How are you feeling right now?": "¿Cómo te sientes ahora mismo?",
+"Check in": "Registrar",
+"In 1 hour": "En 1 hora",
+"Later": "Más tarde",
+"To install on iPhone or iPad: tap the Share button, then choose Add to Home Screen.": "Para instalar en iPhone o iPad: toca el botón Compartir y elige Añadir a pantalla de inicio.",
+"New here?": "¿Primera vez?",
+"Start in the middle and work outward. Each ring is a little more specific. Everything you tap is saved to your tally.": "Empieza por el centro y avanza hacia afuera. Cada anillo es un poco más específico. Todo lo que toques se guarda en tu registro.",
+"Got it": "Entendido",
+"Core feeling": "Emoción base",
+"Go deeper": "Profundiza",
+"Get precise": "Sé preciso",
+"Healthy behavior response": "Respuesta saludable",
+"Start in the middle: tap the feeling closest to yours.": "Empieza por el centro: toca la emoción más cercana a la tuya.",
+"List view": "Ver lista",
+"Back to full wheel": "Volver a la rueda completa",
+"How did it go?": "¿Cómo te fue?",
+"It helped": "Me ayudó",
+"A little": "Un poco",
+"Not really": "No mucho",
+"Didn’t try it": "No lo intenté",
+"Back up your check-ins.": "Haz una copia de tus registros.",
+"Back up now": "Copiar ahora",
+"Your tally": "Tu registro",
+"Undo": "Deshacer",
+"Reset": "Borrar todo",
+"Today": "Hoy",
+"7 days": "7 días",
+"30 days": "30 días",
+"All time": "Todo",
+"words tallied": "palabras registradas",
+"avg intensity": "intensidad media",
+"Check-ins per day": "Registros por día",
+"Patterns": "Patrones",
+"By core feeling": "Por emoción base",
+"Most logged feelings": "Emociones más registradas",
+"Actions you chose": "Acciones que elegiste",
+"What helped": "Lo que ayudó",
+"History": "Historial",
+"Show more": "Ver más",
+"Start with a center word. Every word you tap is added here.": "Empieza con una palabra del centro. Cada palabra que toques se añade aquí.",
+"Your data": "Tus datos",
+"Summary": "Resumen",
+"Export": "Exportar",
+"Import": "Importar",
+"Check-ins are saved only on this device. Export a backup now and then so a cleared browser or a new phone doesn't wipe them.": "Los registros se guardan solo en este dispositivo. Exporta una copia de vez en cuando para que borrar el navegador o cambiar de teléfono no los elimine.",
+"Check-in reminders": "Recordatorios de registro",
+"Checking in a little and often works best. Choose how often you would like a nudge.": "Lo mejor es registrar poco y con frecuencia. Elige cada cuánto quieres un aviso.",
+"No reminders": "Sin recordatorios",
+"Check in whenever you like": "Registra cuando quieras",
+"Every hour": "Cada hora",
+"During your waking hours": "Durante tus horas de vigilia",
+"Every 3 hours": "Cada 3 horas",
+"Every 6 hours": "Cada 6 horas",
+"About 3 times a day": "Unas 3 veces al día",
+"Once a day": "Una vez al día",
+"At a time you pick": "A la hora que elijas",
+"Once a week": "Una vez por semana",
+"On a day you pick": "El día que elijas",
+"Waking hours: from": "Horas de vigilia: de",
+"to": "a",
+"Day": "Día",
+"Time": "Hora",
+"How you will be reminded": "Cómo se te avisará",
+"Show a banner here when a check-in is due and the app is open": "Mostrar un aviso aquí cuando toque registrar y la app esté abierta",
+"Add to my calendar": "Añadir a mi calendario",
+"The calendar file is available in the installed app.": "El archivo de calendario está disponible en la app instalada.",
+"Phones only allow timed alerts from your calendar app. Adding this to your calendar is the most reliable way to get a notification, even when the app is closed.": "Los teléfonos solo permiten alertas programadas desde la app de calendario. Añadirlo a tu calendario es la forma más fiable de recibir un aviso, incluso con la app cerrada.",
+"Adapted from “The Feelings Wheel” created by Dr. Gloria Willcox.": "Adaptado de “The Feelings Wheel”, creada por la Dra. Gloria Willcox.",
+"A short summary you can show a therapist, coach or doctor. Notes are left out unless you choose to include them.": "Un resumen breve que puedes mostrar a un terapeuta, coach o médico. Las notas se omiten salvo que decidas incluirlas.",
+"Include my notes": "Incluir mis notas",
+"Summary text": "Texto del resumen",
+"Copy": "Copiar",
+"Close": "Cerrar",
+"Settings": "Ajustes",
+"Text size": "Tamaño del texto",
+"Standard": "Normal",
+"Large": "Grande",
+"Larger": "Más grande",
+"Higher contrast": "Más contraste",
+"Reduce animations": "Reducir animaciones",
+"Vibrate when I tap a word": "Vibrar al tocar una palabra",
+"Prefer the list to the wheel? Use “List view” above the wheel.": "¿Prefieres la lista a la rueda? Usa “Ver lista” sobre la rueda.",
+"Language and region": "Idioma y región",
+"Language": "Idioma",
+"English": "English",
+"Español": "Español",
+"Country for the help line": "País para la línea de ayuda",
+"PIN lock": "Bloqueo con PIN",
+"A PIN keeps casual snoopers out of the app. It does not encrypt your check-ins.": "Un PIN impide que curiosos abran la app. No cifra tus registros.",
+"New PIN": "PIN nuevo",
+"Turn on PIN lock": "Activar bloqueo con PIN",
+"Current PIN": "PIN actual",
+"Turn off PIN lock": "Desactivar bloqueo con PIN",
+"Show the tutorial": "Ver el tutorial",
+"Done": "Listo",
+"Skip": "Omitir",
+"Back": "Atrás",
+"Next": "Siguiente",
+"Feelings is locked": "Feelings está bloqueado",
+"Enter your PIN": "Ingresa tu PIN",
+"Unlock": "Desbloquear",
+"Forgot your PIN?": "¿Olvidaste tu PIN?",
+"The only way in is to erase everything saved in this app, including your check-ins.": "La única forma de entrar es borrar todo lo guardado en esta app, incluidos tus registros.",
+"Erase everything and unlock": "Borrar todo y desbloquear",
+"Edit check-in": "Editar registro",
+"Delete check-in": "Eliminar registro",
+"Share Feelings": "Compartir Feelings",
+"Send a friend a link to this app. Only the link is shared. Your check-ins are never included.": "Envía a un amigo un enlace a esta app. Solo se comparte el enlace. Tus registros nunca se incluyen.",
+"Share with your phone’s apps": "Compartir con las apps de tu teléfono",
+"App link": "Enlace de la app",
+"Copy link": "Copiar enlace",
+"Send with": "Enviar con",
+"Copy, then paste in the app": "Copia y pega en la app",
+"These apps do not accept a shared link from a web page. Tap one to copy the message, then paste it into a chat or post.": "Estas apps no aceptan un enlace compartido desde una página web. Toca una para copiar el mensaje y pégalo en un chat o publicación.",
+"Export your check-ins": "Exporta tus registros",
+"Copy this text into a file to keep a backup. Choose JSON to restore it later, or CSV to open it in a spreadsheet.": "Copia este texto en un archivo para guardar una copia. Elige JSON para restaurarla después, o CSV para abrirla en una hoja de cálculo.",
+"CSV": "CSV",
+"JSON backup": "Copia JSON",
+"Export text": "Texto exportado",
+"Download": "Descargar",
+"Import a backup": "Importar una copia",
+"Choose a JSON backup file, or paste its contents below. Check-ins already in this app are skipped.": "Elige un archivo de copia JSON o pega su contenido abajo. Los registros que ya están en esta app se omiten.",
+"Backup file": "Archivo de copia",
+"Backup contents": "Contenido de la copia",
+"A new version is ready.": "Hay una versión nueva.",
+"Reload": "Recargar",
+"The four steps. Tap one to light up its ring on the wheel.": "Los cuatro pasos. Toca uno para iluminar su anillo en la rueda.",
+"Feelings wheel": "Rueda de emociones",
+"Feelings wheel with four rings: core feeling, feeling, finer nuance and an idea for what to do": "Rueda de emociones con cuatro anillos: emoción base, emoción, matiz más fino e idea de qué hacer",
+"Time range": "Periodo",
+"How often": "Frecuencia",
+"Format": "Formato",
+"Paste a JSON backup here": "Pega aquí una copia JSON",
+"Check-in complete.": "Registro completo.",
+"Drag the wheel to look around.": "Arrastra la rueda para explorar.",
+"Show full wheel": "Ver rueda completa",
+"Zoom in": "Acercar",
+"Show wheel": "Ver rueda",
+"How strong is the feeling?": "¿Qué tan intensa es la emoción?",
+"Mild": "Leve",
+"Intense": "Intensa",
+"What was it about?": "¿Sobre qué fue?",
+"Note": "Nota",
+"Anything you want to remember (optional)": "Algo que quieras recordar (opcional)",
+"Add context": "Añadir contexto",
+"optional": "opcional",
+"Check-in complete": "Registro completo",
+"All four rings chosen": "Los cuatro anillos elegidos",
+"Your check-in was added to your tally. Add context if you like, or start a new check-in.": "Tu registro se añadió. Añade contexto si quieres o empieza uno nuevo.",
+"Start a new check-in": "Empezar un registro nuevo",
+"Step {n} of 4": "Paso {n} de 4",
+"Pick the one that fits best. You will get more specific in the next steps.": "Elige la que mejor encaje. Serás más específico en los siguientes pasos.",
+"Tap a word on the wheel, or pick from the list below.": "Toca una palabra en la rueda o elige de la lista.",
+"Choose one": "Elige una",
+"Changed your mind?": "¿Cambiaste de opinión?",
+"Start over": "Empezar de nuevo",
+"Added to your tally: {w} ✓": "Añadido a tu registro: {w} ✓",
+"Date not recorded": "Fecha no registrada",
+"Yesterday": "Ayer",
+"Last tapped:": "Último toque:",
+"Mostly <b>{f}</b>, {a} of {n} {c}.": "Sobre todo <b>{f}</b>, {a} de {n} {c}.",
+"Most common feeling: <b>{f}</b>.": "Emoción más común: <b>{f}</b>.",
+"Most often about: <b>{f}</b>.": "Casi siempre sobre: <b>{f}</b>.",
+"Check-ins per day, last {n} days": "Registros por día, últimos {n} días",
+"{n} in total.": "{n} en total.",
+"Intensity {n}/5": "Intensidad {n}/5",
+"in progress": "en curso",
+"Edit check-in:": "Editar registro:",
+"No check-ins in this period. Try a longer range.": "No hay registros en este periodo. Prueba un periodo más largo.",
+"{n} earlier check-in has no date, so it appears only under All time.": "{n} registro anterior no tiene fecha, por eso solo aparece en Todo.",
+"{n} earlier check-ins have no date, so they appear only under All time.": "{n} registros anteriores no tienen fecha, por eso solo aparecen en Todo.",
+"Tap again to erase all": "Toca otra vez para borrar todo",
+"Tap again to delete": "Toca otra vez para eliminar",
+"Nothing to export yet.": "Aún no hay nada que exportar.",
+"Copied.": "Copiado.",
+"Select the text and copy it manually.": "Selecciona el texto y cópialo manualmente.",
+"Copied to the clipboard.": "Copiado al portapapeles.",
+"You will be reminded at {list}, every day.": "Se te avisará a las {list}, todos los días.",
+"{a} and {b}": "{a} y {b}",
+"You will be reminded every day at {time}.": "Se te avisará todos los días a las {time}.",
+"You will be reminded every {day} at {time}.": "Se te avisará cada {day} a las {time}.",
+"Feelings: a simple feelings wheel to help you name what you feel and pick a healthy next step.": "Feelings: una rueda de emociones sencilla para ayudarte a nombrar lo que sientes y elegir un siguiente paso saludable.",
+"Text message": "Mensaje de texto",
+"Email": "Correo",
+"Try the Feelings app": "Prueba la app Feelings",
+"Any other app": "Otra app",
+"Sharing from your phone isn't available here. Use the buttons below.": "Aquí no se puede compartir desde el teléfono. Usa los botones de abajo.",
+"Link copied.": "Enlace copiado.",
+"Couldn't copy automatically. Press and hold the link to copy it.": "No se pudo copiar automáticamente. Mantén pulsado el enlace para copiarlo.",
+"Copied. Now open {app} and paste it into a message or post.": "Copiado. Ahora abre {app} y pégalo en un mensaje o publicación.",
+"Couldn't copy automatically. Copy the link above instead.": "No se pudo copiar automáticamente. Copia el enlace de arriba.",
+"Download started. If nothing happens, use Copy instead.": "Descarga iniciada. Si no pasa nada, usa Copiar.",
+"Download isn't available here. Use Copy instead.": "Aquí no se puede descargar. Usa Copiar.",
+"Feelings check-in": "Registro de Feelings",
+"Take a minute to name how you feel. Open the Feelings app.": "Tómate un minuto para nombrar cómo te sientes. Abre la app Feelings.",
+"That isn't a Feelings backup. Export as JSON backup, then import that.": "Eso no es una copia de Feelings. Exporta como copia JSON e impórtala.",
+"No check-ins found in that backup.": "No se encontraron registros en esa copia.",
+"Choose a file or paste a backup first.": "Primero elige un archivo o pega una copia.",
+"Imported {n} check-in": "Se importó {n} registro",
+"Imported {n} check-ins": "Se importaron {n} registros",
+"skipped {n} already here": "se omitieron {n} que ya estaban",
+"today": "hoy",
+"yesterday": "ayer",
+"{n} days ago": "hace {n} días",
+"Check-in saved: {w} ✓": "Registro guardado: {w} ✓",
+"I’m done. Save this check-in": "Listo. Guardar este registro",
+"You can stop here, or keep going for a more specific word.": "Puedes parar aquí o seguir para una palabra más específica.",
+"Hide meanings": "Ocultar significados",
+"Show meanings": "Ver significados",
+"Last backup: {when}.": "Última copia: {when}.",
+"You have not backed up yet.": "Aún no has hecho una copia.",
+"Your last backup was {when}. Back up your {n} check-ins so they are not lost.": "Tu última copia fue {when}. Copia tus {n} registros para no perderlos.",
+"Your {n} check-ins are saved only on this phone. Back them up so they are not lost.": "Tus {n} registros se guardan solo en este teléfono. Haz una copia para no perderlos.",
+"mostly {f}": "sobre todo {f}",
+"day in a row": "día seguido",
+"days in a row": "días seguidos",
+"Best: {n}": "Mejor: {n}",
+"Missing a day is okay. Pick it up again whenever you like.": "Faltar un día no pasa nada. Retómalo cuando quieras.",
+"Patterns by day and time appear after about 5 check-ins in this period.": "Los patrones por día y hora aparecen tras unos 5 registros en este periodo.",
+"By day of the week": "Por día de la semana",
+"By time of day": "Por hora del día",
+"You chose “{w}”. Did it help?": "Elegiste “{w}”. ¿Te ayudó?",
+"Did “{w}” help?": "¿Te ayudó “{w}”?",
+"helped {h} of {n}": "ayudó {h} de {n}",
+"Feelings summary": "Resumen de Feelings",
+"Check-ins: {n}": "Registros: {n}",
+"No check-ins in this period.": "No hay registros en este periodo.",
+"Average intensity: {v} out of 5": "Intensidad media: {v} de 5",
+"Main feelings": "Emociones principales",
+"Most common specific feelings": "Emociones específicas más comunes",
+"Most often about": "Casi siempre sobre",
+"Busiest day: {d}": "Día con más registros: {d}",
+"Most check-ins happen in the {p}": "La mayoría de los registros son por la {p}",
+"Actions chosen": "Acciones elegidas",
+"Did the action help?": "¿Ayudó la acción?",
+"Notes": "Notas",
+"Made with the Feelings app. This is a personal record, not a diagnosis or medical advice.": "Hecho con la app Feelings. Es un registro personal, no un diagnóstico ni consejo médico.",
+"If you are struggling or in crisis:": "Si estás pasando un mal momento o en crisis:",
+"More countries:": "Más países:",
+"PIN lock is on.": "El bloqueo con PIN está activado.",
+"PIN lock is off.": "El bloqueo con PIN está desactivado.",
+"Too many tries. Please wait a moment.": "Demasiados intentos. Espera un momento.",
+"That PIN is not right.": "Ese PIN no es correcto.",
+"Tap again to erase everything and unlock": "Toca otra vez para borrar todo y desbloquear",
+"Use 4 to 6 digits.": "Usa de 4 a 6 dígitos.",
+"PIN lock turned on.": "Bloqueo con PIN activado.",
+"PIN lock turned off.": "Bloqueo con PIN desactivado.",
+"Get started": "Empezar",
+"core feeling": "emoción base",
+"feeling": "emoción",
+"shade": "matiz",
+"action": "acción",
+"Which feeling is closest to yours?": "¿Qué emoción se parece más a la tuya?",
+"Can you narrow it down?": "¿Puedes precisarla?",
+"Be a little more specific.": "Sé un poco más específico.",
+"What might help right now?": "¿Qué podría ayudar ahora?",
+"Center ring: the core feeling, the broad family your feeling belongs to.": "Anillo central: la emoción base, la gran familia a la que pertenece lo que sientes.",
+"Second ring: go deeper into that family with a more exact feeling.": "Segundo anillo: profundiza en esa familia con una emoción más exacta.",
+"Third ring: get precise with the closest word for it.": "Tercer anillo: sé preciso con la palabra más cercana.",
+"Outer ring: a healthy behavior response, an idea for what to do next.": "Anillo exterior: una respuesta saludable, una idea de qué hacer después.",
+"Morning": "Mañana",
+"Afternoon": "Tarde",
+"Evening": "Noche temprana",
+"Night": "Madrugada",
+"Work": "Trabajo",
+"Family": "Familia",
+"Friends": "Amigos",
+"Health": "Salud",
+"Money": "Dinero",
+"Sleep": "Sueño",
+"School": "Estudios",
+"Other": "Otro",
+"Welcome to Feelings": "Te damos la bienvenida a Feelings",
+"Name what you feel in a few quick taps, then pick a healthy next step. No account needed.": "Nombra lo que sientes con unos toques y elige un siguiente paso saludable. No necesitas cuenta.",
+"Start in the middle": "Empieza por el centro",
+"Tap a core feeling at the center of the wheel. Each step moves one ring outward and gets more specific. You can tap “I’m done” any time after step 2.": "Toca una emoción base en el centro de la rueda. Cada paso avanza un anillo hacia afuera y es más específico. Puedes tocar “Listo” en cualquier momento después del paso 2.",
+"Make it a habit": "Hazlo un hábito",
+"Set a reminder, look for patterns in your tally, and back up your history now and then. Check-ins are saved on this phone.": "Configura un recordatorio, busca patrones en tu registro y haz copias de vez en cuando. Los registros se guardan en este teléfono.",
+"United States": "Estados Unidos",
+"Canada": "Canadá",
+"United Kingdom": "Reino Unido",
+"Ireland": "Irlanda",
+"Australia": "Australia",
+"New Zealand": "Nueva Zelanda",
+"Spain": "España",
+"Mexico": "México",
+"India": "India",
+"Another country": "Otro país",
+"Call or text 988 (Suicide & Crisis Lifeline)": "Llama o envía un texto al 988 (Línea de Prevención del Suicidio y Crisis)",
+"Call or text 988 (Suicide Crisis Helpline)": "Llama o envía un texto al 988 (Línea de Crisis por Suicidio)",
+"Samaritans: call 116 123": "Samaritans: llama al 116 123",
+"Lifeline: call 13 11 14": "Lifeline: llama al 13 11 14",
+"Call or text 1737": "Llama o envía un texto al 1737",
+"Call 024": "Llama al 024",
+"Línea de la Vida: 800 911 2000": "Línea de la Vida: 800 911 2000",
+"Tele-MANAS: call 14416": "Tele-MANAS: llama al 14416",
+"Find a helpline for your country at findahelpline.com. If you may be in immediate danger, call your local emergency number.": "Busca una línea de ayuda de tu país en findahelpline.com. Si puedes estar en peligro inmediato, llama al número de emergencias de tu zona.",
+"Download file": "Descargar archivo"
+};
+  ES_WORDS = {
+"Fearful": "Miedo",
+"Angry": "Enojo",
+"Disgusted": "Asco",
+"Sad": "Tristeza",
+"Happy": "Alegría",
+"Surprised": "Sorpresa",
+"Bad": "Malestar",
+"Scared": "Asustado",
+"Anxious": "Ansioso",
+"Insecure": "Inseguro",
+"Weak": "Débil",
+"Rejected": "Rechazado",
+"Threatened": "Amenazado",
+"Terrified": "Aterrado",
+"Frightened": "Espantado",
+"Overwhelmed": "Abrumado",
+"Worried": "Preocupado",
+"Inadequate": "Insuficiente",
+"Inferior": "Inferior",
+"Worthless": "Sin valor",
+"Insignificant": "Insignificante",
+"Excluded": "Excluido",
+"Persecuted": "Perseguido",
+"Nervous": "Nervioso",
+"Exposed": "Expuesto",
+"Let down": "Decepcionado",
+"Humiliated": "Humillado",
+"Bitter": "Amargado",
+"Mad": "Enfadado",
+"Aggressive": "Agresivo",
+"Frustrated": "Frustrado",
+"Distant": "Distante",
+"Critical": "Crítico",
+"Betrayed": "Traicionado",
+"Resentful": "Resentido",
+"Disrespected": "Faltado al respeto",
+"Ridiculed": "Ridiculizado",
+"Indignant": "Indignado",
+"Violated": "Violentado",
+"Furious": "Furibundo",
+"Jealous": "Celoso",
+"Provoked": "Provocado",
+"Hostile": "Hostil",
+"Infuriated": "Enfurecido",
+"Annoyed": "Molesto",
+"Withdrawn": "Retraído",
+"Numb": "Insensible",
+"Skeptical": "Escéptico",
+"Dismissive": "Desdeñoso",
+"Disapproving": "Reprobador",
+"Disappointed": "Desilusionado",
+"Awful": "Espantoso",
+"Repelled": "Repelido",
+"Judgmental": "Prejuicioso",
+"Embarrassed": "Avergonzado",
+"Appalled": "Consternado",
+"Revolted": "Repugnado",
+"Nauseated": "Con náuseas",
+"Detestable": "Detestable",
+"Horrified": "Horrorizado",
+"Hesitant": "Indeciso",
+"Hurt": "Herido",
+"Depressed": "Deprimido",
+"Guilty": "Culpable",
+"Despair": "Desesperado",
+"Vulnerable": "Vulnerable",
+"Lonely": "Solo",
+"Empty": "Vacío",
+"Remorseful": "Arrepentido",
+"Ashamed": "Avergonzado",
+"Powerless": "Impotente",
+"Grief": "Duelo",
+"Fragile": "Frágil",
+"Victimized": "Victimizado",
+"Abandoned": "Abandonado",
+"Isolated": "Aislado",
+"Optimistic": "Optimista",
+"Trusting": "Confiado",
+"Peaceful": "Tranquilo",
+"Powerful": "Poderoso",
+"Accepted": "Aceptado",
+"Proud": "Orgulloso",
+"Interested": "Interesado",
+"Content": "Satisfecho",
+"Playful": "Juguetón",
+"Inspired": "Inspirado",
+"Hopeful": "Esperanzado",
+"Intimate": "Cercano",
+"Sensitive": "Sensible",
+"Thankful": "Agradecido",
+"Loving": "Cariñoso",
+"Creative": "Creativo",
+"Courageous": "Valiente",
+"Valued": "Valorado",
+"Respected": "Respetado",
+"Confident": "Seguro",
+"Successful": "Exitoso",
+"Inquisitive": "Inquisitivo",
+"Curious": "Curioso",
+"Joyful": "Dichoso",
+"Free": "Libre",
+"Cheeky": "Travieso",
+"Aroused": "Excitado",
+"Excited": "Emocionado",
+"Amazed": "Asombrado",
+"Confused": "Confundido",
+"Startled": "Sobresaltado",
+"Energetic": "Enérgico",
+"Eager": "Entusiasmado",
+"Awe": "Admiración",
+"Astounded": "Atónito",
+"Perplexed": "Perplejo",
+"Disillusioned": "Desencantado",
+"Dismayed": "Desanimado",
+"Shocked": "Impactado",
+"Tired": "Cansado",
+"Stressed": "Estresado",
+"Busy": "Ocupado",
+"Bored": "Aburrido",
+"Unfocused": "Distraído",
+"Sleepy": "Con sueño",
+"Out of control": "Sin control",
+"Rushed": "Apurado",
+"Pressured": "Presionado",
+"Apathetic": "Apático",
+"Indifferent": "Indiferente",
+"Prepare": "Prepararte",
+"Seek support": "Busca apoyo",
+"Plan": "Planificar",
+"Be cautious": "Ser prudente",
+"Reduce risk": "Reducir riesgos",
+"Ground yourself": "Aterrizar",
+"Breathe": "Respirar",
+"Set boundaries": "Poner límites",
+"Confront": "Afrontar",
+"Speak up": "Hablar claro",
+"Express needs": "Pedir lo necesario",
+"Walk away": "Alejarte",
+"Channel energy": "Canalizar energía",
+"Problem-solve": "Resolver",
+"Get space": "Tomar espacio",
+"Redirect attention": "Cambiar el foco",
+"Practice patience": "Tener paciencia",
+"Avoid": "Evitar",
+"Keep distance": "Tomar distancia",
+"Cleanse": "Limpiar",
+"Let go": "Soltar",
+"Speak honestly": "Ser franco",
+"Reframe": "Replantear",
+"Focus on solutions": "Buscar soluciones",
+"Choose differently": "Elegir distinto",
+"Find kindness": "Buscar amabilidad",
+"Be heard": "Ser escuchado",
+"Find others": "Buscar compañía",
+"Prioritize rest": "Priorizar descanso",
+"Practice self-care": "Cuidarte",
+"Find meaning": "Buscar sentido",
+"Focus on health": "Cuidar tu salud",
+"Ask for help": "Pedir ayuda",
+"Express feelings": "Desahogarte",
+"Seek comfort": "Buscar consuelo",
+"Reach out": "Acercarte",
+"Enjoy the moment": "Vivir el momento",
+"Take initiative": "Tomar iniciativa",
+"Pursue goals": "Perseguir metas",
+"Spread positivity": "Contagiar alegría",
+"Show gratitude": "Dar las gracias",
+"Help others": "Ayudar a otros",
+"Learn": "Aprender",
+"Explore": "Explorar",
+"Be active": "Estar activo",
+"Create": "Crear",
+"Connect": "Conectar",
+"Celebrate": "Celebrar",
+"Stay curious": "Seguir curioso",
+"Seek clarity": "Buscar claridad",
+"Recenter": "Reenfocarte",
+"Refocus": "Retomar el foco",
+"Rest": "Descansar"
+};
+  DEFS_ES = {
+"Fearful": "Sentirte amenazado o inseguro, o preocupado por lo que pueda pasar.",
+"Angry": "Sentir un fuerte disgusto, a menudo cuando algo parece injusto.",
+"Disgusted": "Sentir rechazo por algo, o una fuerte desaprobación.",
+"Sad": "Sentirte decaído, herido o apenado, a menudo tras una pérdida o una decepción.",
+"Happy": "Sentirte bien, contento o satisfecho.",
+"Surprised": "Sentirte tomado por sorpresa por algo inesperado.",
+"Bad": "Sentirte raro, agotado o distinto a ti mismo, sin una causa clara.",
+"Scared": "Tener miedo de algo que parece peligroso o amenazante.",
+"Anxious": "Preocupado e inquieto, a menudo por algo del futuro.",
+"Insecure": "Sin confianza ni seguridad en ti mismo o en tu lugar.",
+"Weak": "Sin fuerza, energía o confianza.",
+"Rejected": "Sentir que te apartan, que no te quieren o no te aceptan.",
+"Threatened": "Sentir que algo o alguien podría hacerte daño.",
+"Terrified": "Con muchísimo miedo, como ante un gran peligro.",
+"Frightened": "Asustado o alarmado de repente.",
+"Overwhelmed": "Sentir que hay demasiado que manejar a la vez.",
+"Worried": "Inquieto por pensamientos sobre lo que podría salir mal.",
+"Inadequate": "Sentir que no eres suficiente o que no das la talla.",
+"Inferior": "Sentirte menos capaz o menos importante que los demás.",
+"Worthless": "Sentir que no tienes valor ni nada que ofrecer.",
+"Insignificant": "Sentirte poco importante o pasado por alto.",
+"Excluded": "Dejado fuera de un grupo o de una actividad.",
+"Persecuted": "Sentir que te tratan injustamente o te señalan una y otra vez.",
+"Nervous": "Tenso y agitado, a menudo antes de algo importante.",
+"Exposed": "Sentirte vulnerable, como si los demás vieran tus puntos débiles.",
+"Let down": "Decepcionado porque alguien o algo no cumplió.",
+"Humiliated": "Avergonzado o dejado en ridículo delante de otros.",
+"Bitter": "Aferrado al resentimiento por algo injusto.",
+"Mad": "Molesto e irritado, listo para responder.",
+"Aggressive": "Sentir un fuerte impulso de atacar o enfrentar.",
+"Frustrated": "Bloqueado o molesto porque las cosas no salen como quieres.",
+"Distant": "Sentirte emocionalmente lejos de los demás, o apartado.",
+"Critical": "Rápido para notar defectos y juzgar.",
+"Betrayed": "Herido porque alguien en quien confiabas rompió esa confianza.",
+"Resentful": "Enojado durante mucho tiempo por haber sido tratado injustamente.",
+"Disrespected": "Sentir que te tratan como si no importaras.",
+"Ridiculed": "Que se rían de ti o se burlen de una forma hiriente.",
+"Indignant": "Enojado porque algo parece injusto o incorrecto.",
+"Violated": "Sentir que cruzaron tus límites o tu privacidad.",
+"Furious": "Extremadamente enojado.",
+"Jealous": "Querer lo que tiene otra persona, o temer perder su atención.",
+"Provoked": "Llevado al enojo por lo que alguien dijo o hizo.",
+"Hostile": "Poco amistoso y listo para el conflicto.",
+"Infuriated": "Puesto extremadamente furioso.",
+"Annoyed": "Ligeramente irritado.",
+"Withdrawn": "Alejarte de la gente o de la conversación.",
+"Numb": "Sentir poco o nada, como si las emociones estuvieran apagadas.",
+"Skeptical": "Con dudas y difícil de convencer.",
+"Dismissive": "Tratar algo o a alguien como si no mereciera atención.",
+"Disapproving": "Sentir que algo está mal o no es aceptable.",
+"Disappointed": "Triste o defraudado porque no se cumplieron tus esperanzas.",
+"Awful": "Sentirte muy mal por algo o por ti mismo.",
+"Repelled": "Querer apartarte de algo desagradable.",
+"Judgmental": "Rápido para formar opiniones duras sobre los demás.",
+"Embarrassed": "Cohibido o incómodo por que te vean de forma desfavorable.",
+"Appalled": "Conmocionado y alterado por algo terrible.",
+"Revolted": "Con profundo asco.",
+"Nauseated": "Con el estómago revuelto, o con asco solo de pensar en algo.",
+"Detestable": "Ver algo como odioso, o sentir odio hacia ti mismo.",
+"Horrified": "Conmocionado y asustado por algo espantoso.",
+"Hesitant": "Inseguro y conteniéndote.",
+"Hurt": "Dolido por algo que alguien dijo o hizo.",
+"Depressed": "Sentirte muy decaído o pesado, a menudo durante días.",
+"Guilty": "Sentir que hiciste algo malo.",
+"Despair": "Sentir que las cosas no van a mejorar.",
+"Vulnerable": "Sentirte expuesto a que te hagan daño o sin protección.",
+"Lonely": "Sentirte solo o sin conexión con nadie.",
+"Empty": "Sentirte hueco, como si algo faltara por dentro.",
+"Remorseful": "Muy arrepentido de algo que hiciste.",
+"Ashamed": "Sentir que hay algo malo en ti, o que hiciste algo vergonzoso.",
+"Powerless": "Sentir que no puedes cambiar lo que está pasando.",
+"Grief": "Profunda tristeza tras una pérdida.",
+"Fragile": "Fácil de herir o a punto de quebrarte.",
+"Victimized": "Sentir que otros te hicieron daño o te trataron injustamente.",
+"Abandoned": "Dejado atrás por alguien que importaba.",
+"Isolated": "Separado de otras personas.",
+"Optimistic": "Esperar cosas buenas en el futuro.",
+"Trusting": "Sentirte seguro al confiar en alguien o en algo.",
+"Peaceful": "En calma y sin preocupaciones.",
+"Powerful": "Sentirte fuerte y capaz de lograr cosas.",
+"Accepted": "Sentirte bienvenido e incluido tal como eres.",
+"Proud": "Contento por algo que hiciste tú o alguien que quieres.",
+"Interested": "Con ganas de saber o aprender más.",
+"Content": "Tranquilamente satisfecho con cómo están las cosas.",
+"Playful": "Ligero y con ganas de divertirte.",
+"Inspired": "Movido a crear o actuar por algo que te elevó.",
+"Hopeful": "Creer que algo bueno es posible.",
+"Intimate": "Sentirte cerca y conectado con alguien.",
+"Sensitive": "Sintonizado con tus sentimientos y los de los demás.",
+"Thankful": "Agradecido por algo o por alguien.",
+"Loving": "Sentir cariño y afecto por alguien.",
+"Creative": "Lleno de ideas y con ganas de hacer algo.",
+"Courageous": "Lo bastante valiente para actuar aunque sea difícil.",
+"Valued": "Sentir que le importas a los demás.",
+"Respected": "Sentir que te tratan con consideración y respeto.",
+"Confident": "Seguro de ti mismo y de tus capacidades.",
+"Successful": "Sentir que lograste una meta.",
+"Inquisitive": "Con ganas de preguntar y averiguar.",
+"Curious": "Con ganas de explorar o entender.",
+"Joyful": "Lleno de felicidad.",
+"Free": "Sin cargas y capaz de ser tú mismo.",
+"Cheeky": "Atrevido de forma juguetona, un poco travieso.",
+"Aroused": "Sentirte agitado, con energía o físicamente emocionado.",
+"Excited": "Con ganas y energía por algo que viene.",
+"Amazed": "Lleno de asombro.",
+"Confused": "Sin poder darle sentido a las cosas.",
+"Startled": "Sacudido por algo repentino.",
+"Energetic": "Lleno de energía y listo para moverte.",
+"Eager": "Entusiasmado e impaciente por empezar.",
+"Awe": "Asombro ante algo inmenso o hermoso.",
+"Astounded": "Muy sorprendido.",
+"Perplexed": "Desconcertado y sin saber qué pasa.",
+"Disillusioned": "Decepcionado al descubrir que algo no era lo que creías.",
+"Dismayed": "Alterado y desanimado por algo inesperado.",
+"Shocked": "Aturdido por algo repentino o perturbador.",
+"Tired": "Necesitar descanso.",
+"Stressed": "Bajo presión y tensión.",
+"Busy": "Ocupado con mucho por hacer.",
+"Bored": "Sin interés e inquieto.",
+"Unfocused": "Sin poder mantener la atención en una sola cosa.",
+"Sleepy": "Adormilado y con ganas de dormir.",
+"Out of control": "Sentir que no puedes dirigir los hechos ni tus propias reacciones.",
+"Rushed": "Sentir que tienes muy poco tiempo.",
+"Pressured": "Sentir que te empujan a hacer o decidir algo.",
+"Apathetic": "Que no te importa, o te importa muy poco.",
+"Indifferent": "Ni a favor ni en contra, sin un sentimiento fuerte."
+};
+
+  function t(s) { return (LANG === "es" && ES[s] !== undefined) ? ES[s] : s; }
+  function tf(s, v) {
+    var r = t(s);
+    if (v) for (var k in v) r = r.split("{" + k + "}").join(v[k]);
+    return r;
+  }
+  function tagName(x) { return t(x); }
+  function plural(n, one, many) { return n === 1 ? one : many; }
+  function tw(w) { return (LANG === "es" && ES_WORDS[w] !== undefined) ? ES_WORDS[w] : w; }
+
+  var DEFS = {
+    "Fearful": "Feeling threatened or unsafe, or worried about what might happen.",
+    "Angry": "Feeling strong displeasure, often when something seems unfair.",
+    "Disgusted": "Feeling repulsed by something, or strongly disapproving of it.",
+    "Sad": "Feeling low, hurt or sorrowful, often after a loss or disappointment.",
+    "Happy": "Feeling good, pleased or content.",
+    "Surprised": "Feeling caught off guard by something unexpected.",
+    "Bad": "Feeling off, drained or not like yourself, without one clear cause.",
+    "Scared": "Afraid of something that feels dangerous or threatening.",
+    "Anxious": "Worried and uneasy, often about something in the future.",
+    "Insecure": "Not confident or sure of yourself or your place.",
+    "Weak": "Lacking strength, energy or confidence.",
+    "Rejected": "Feeling pushed away, unwanted or not accepted.",
+    "Threatened": "Feeling that something or someone could harm you.",
+    "Terrified": "Extremely afraid, as if in great danger.",
+    "Frightened": "Suddenly afraid or alarmed.",
+    "Overwhelmed": "Feeling there is too much to handle at once.",
+    "Worried": "Troubled by thoughts about what could go wrong.",
+    "Inadequate": "Feeling you are not good enough or do not measure up.",
+    "Inferior": "Feeling less capable or less important than others.",
+    "Worthless": "Feeling you have no value or nothing to offer.",
+    "Insignificant": "Feeling unimportant or overlooked.",
+    "Excluded": "Left out or kept out of a group or activity.",
+    "Persecuted": "Feeling treated unfairly or targeted again and again.",
+    "Nervous": "Tense and jittery, often before something important.",
+    "Exposed": "Feeling vulnerable, as if others can see your weak spots.",
+    "Let down": "Disappointed because someone or something did not come through.",
+    "Humiliated": "Shamed or made to look foolish in front of others.",
+    "Bitter": "Holding on to resentment about something unfair.",
+    "Mad": "Upset and irritated, ready to push back.",
+    "Aggressive": "Feeling a strong urge to attack or confront.",
+    "Frustrated": "Blocked or annoyed because things are not going your way.",
+    "Distant": "Feeling emotionally far from others, or pulled away.",
+    "Critical": "Quick to notice faults and judge.",
+    "Betrayed": "Hurt because someone you trusted broke that trust.",
+    "Resentful": "Angry for a long time about being treated unfairly.",
+    "Disrespected": "Feeling treated as if you do not matter.",
+    "Ridiculed": "Laughed at or mocked in a hurtful way.",
+    "Indignant": "Angry because something feels unfair or wrong.",
+    "Violated": "Feeling your boundaries or privacy were crossed.",
+    "Furious": "Extremely angry.",
+    "Jealous": "Wanting what someone else has, or fearing you will lose someone's attention.",
+    "Provoked": "Pushed into anger by what someone said or did.",
+    "Hostile": "Unfriendly and ready for conflict.",
+    "Infuriated": "Made extremely angry.",
+    "Annoyed": "Mildly irritated.",
+    "Withdrawn": "Pulling back from people or conversation.",
+    "Numb": "Feeling little or nothing, as if emotions are switched off.",
+    "Skeptical": "Doubtful and not easily convinced.",
+    "Dismissive": "Treating something or someone as not worth attention.",
+    "Disapproving": "Feeling that something is wrong or not acceptable.",
+    "Disappointed": "Sad or let down because hopes were not met.",
+    "Awful": "Feeling very bad about something or yourself.",
+    "Repelled": "Wanting to turn away from something unpleasant.",
+    "Judgmental": "Quick to form harsh opinions about others.",
+    "Embarrassed": "Self-conscious or uncomfortable about being seen in a bad light.",
+    "Appalled": "Shocked and upset by something terrible.",
+    "Revolted": "Deeply disgusted.",
+    "Nauseated": "Feeling sick to your stomach, or sick at the thought of something.",
+    "Detestable": "Seeing something as hateful, or feeling hateful yourself.",
+    "Horrified": "Shocked and frightened by something awful.",
+    "Hesitant": "Unsure and holding back.",
+    "Hurt": "Pained by something someone said or did.",
+    "Depressed": "Feeling very low or heavy, often for days.",
+    "Guilty": "Feeling you did something wrong.",
+    "Despair": "Feeling that things will not get better.",
+    "Vulnerable": "Feeling open to being hurt or unprotected.",
+    "Lonely": "Feeling alone or lacking connection.",
+    "Empty": "Feeling hollow, as if something is missing inside.",
+    "Remorseful": "Deeply sorry about something you did.",
+    "Ashamed": "Feeling there is something wrong with you, or that you did something shameful.",
+    "Powerless": "Feeling you cannot change what is happening.",
+    "Grief": "Deep sorrow after a loss.",
+    "Fragile": "Easily hurt or close to breaking.",
+    "Victimized": "Feeling harmed or treated unfairly by others.",
+    "Abandoned": "Left behind by someone who mattered.",
+    "Isolated": "Cut off from other people.",
+    "Optimistic": "Expecting good things ahead.",
+    "Trusting": "Feeling safe relying on someone or something.",
+    "Peaceful": "Calm and free from worry.",
+    "Powerful": "Feeling strong and able to make things happen.",
+    "Accepted": "Feeling welcomed and included as you are.",
+    "Proud": "Pleased with something you or someone you care about did.",
+    "Interested": "Wanting to know or learn more.",
+    "Content": "Quietly satisfied with how things are.",
+    "Playful": "Lighthearted and ready to have fun.",
+    "Inspired": "Moved to create or act by something that lifted you.",
+    "Hopeful": "Believing that something good is possible.",
+    "Intimate": "Feeling close and connected to someone.",
+    "Sensitive": "Tuned in to your own and other people's feelings.",
+    "Thankful": "Appreciative of something or someone.",
+    "Loving": "Feeling warmth and care toward someone.",
+    "Creative": "Full of ideas and wanting to make something.",
+    "Courageous": "Brave enough to act even when it is hard.",
+    "Valued": "Feeling that you matter to others.",
+    "Respected": "Feeling treated with consideration and regard.",
+    "Confident": "Sure of yourself and your abilities.",
+    "Successful": "Feeling that you reached a goal.",
+    "Inquisitive": "Eager to ask questions and find out.",
+    "Curious": "Wanting to explore or understand.",
+    "Joyful": "Full of happiness.",
+    "Free": "Unburdened and able to be yourself.",
+    "Cheeky": "Playfully bold, a little mischievous.",
+    "Aroused": "Feeling stirred up, energized or physically excited.",
+    "Excited": "Eager and energized about something coming up.",
+    "Amazed": "Struck with wonder.",
+    "Confused": "Unable to make sense of things.",
+    "Startled": "Jolted by something sudden.",
+    "Energetic": "Full of energy and ready to move.",
+    "Eager": "Keen and impatient to get started.",
+    "Awe": "Wonder at something vast or beautiful.",
+    "Astounded": "Greatly surprised.",
+    "Perplexed": "Puzzled and unsure what is going on.",
+    "Disillusioned": "Let down after finding something was not what you believed.",
+    "Dismayed": "Upset and discouraged by something unexpected.",
+    "Shocked": "Stunned by something sudden or upsetting.",
+    "Tired": "Needing rest.",
+    "Stressed": "Under pressure and strained.",
+    "Busy": "Occupied with a lot to do.",
+    "Bored": "Uninterested and restless.",
+    "Unfocused": "Unable to keep your attention on one thing.",
+    "Sleepy": "Drowsy and ready to sleep.",
+    "Out of control": "Feeling you cannot steer events or your own reactions.",
+    "Rushed": "Feeling you have too little time.",
+    "Pressured": "Feeling pushed to do or decide something.",
+    "Apathetic": "Not caring, or caring very little.",
+    "Indifferent": "Neither for nor against, with no strong feeling."
+  };
+
+  /* Keep the English word for every position so meanings and Spanish can be looked up by it */
+  DATA.forEach(function (w) {
+    w.en = { name: w.name, r2: w.r2.slice(), r3: w.r3.slice(), r4: w.r4.slice() };
+    if (LANG === "es") {
+      w.name = tw(w.name);
+      w.r2 = w.r2.map(tw); w.r3 = w.r3.map(tw); w.r4 = w.r4.map(tw);
+    }
+  });
+  function enOf(c, r, i) { var e = DATA[c].en; return r === 0 ? e.name : (r === 1 ? e.r2 : (r === 2 ? e.r3 : e.r4))[i]; }
+  function defOf(c, r, i) {
+    if (r > 2) return "";
+    var en = enOf(c, r, i);
+    return (LANG === "es" && DEFS_ES[en]) ? DEFS_ES[en] : (DEFS[en] || "");
+  }
+
+  function translateStatic() {
+    if (LANG !== "es") return;
+    var w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null), n, list = [];
+    while ((n = w.nextNode())) list.push(n);
+    list.forEach(function (n) {
+      var p = n.parentNode && n.parentNode.nodeName;
+      if (p === "SCRIPT" || p === "STYLE") return;
+      var raw = n.nodeValue, key = raw.replace(/\s+/g, " ").trim();
+      if (key && ES[key] !== undefined) n.nodeValue = raw.replace(raw.trim(), ES[key]);
+    });
+    document.querySelectorAll("[aria-label],[placeholder],[title],[alt]").forEach(function (el) {
+      ["aria-label", "placeholder", "title", "alt"].forEach(function (a) {
+        var v = el.getAttribute(a);
+        if (v) { var k = v.replace(/\s+/g, " ").trim(); if (ES[k] !== undefined) el.setAttribute(a, ES[k]); }
+      });
+    });
+  }
+
 
   var RADII = [0, 100, 215, 355, 500];       // ring boundaries (viewBox units)
   var TINTS = [0, 0.30, 0.15, 0];            // per ring: base / lighter
   var TOTAL = DATA.reduce(function (s, w) { return s + w.r3.length; }, 0);
-  var REDUCE = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var REDUCE = window.matchMedia("(prefers-reduced-motion: reduce)").matches || settings.motion === false;
 
   function hexToRgb(h) { var n = parseInt(h.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
   function mix(hex, t) {
@@ -564,7 +1619,7 @@ footer .credit { max-width: 60ch; margin: 10px auto 0; font-size: 0.72rem; }
       var mid = (a0 + a1) / 2, rm = (RADII[ring] + RADII[ring + 1]) / 2, fs = FONT[ring];
       if (ring === 0) { rm = 55; fs = Math.min(20, 80 / (0.62 * label.length)); }
       var p = pol(rm, mid), rot = mid - 90 + (mid > 180 ? 180 : 0);
-      var aria = label + ", " + RING_NAMES[ring] + (ring ? ", " + w.name : "");
+      var aria = label + ", " + t(RING_NAMES[ring]) + (ring ? ", " + w.name : "");
       html += '<g class="seg' + (ring === 0 ? " core" : "") + '" role="button" aria-label="' + esc(aria) + '" aria-disabled="true" data-c="' + ci + '" data-r="' + ring + '" data-i="' + i + '">' +
         '<path d="' + sector(RADII[ring], RADII[ring + 1], a0, a1) + '" fill="' + w.cols[ring] + '"/>' +
         '<text transform="translate(' + f(p[0]) + " " + f(p[1]) + ") rotate(" + f(rot) + ')" text-anchor="middle" dominant-baseline="central" font-size="' + f(fs) + '">' +
@@ -612,13 +1667,14 @@ footer .credit { max-width: 60ch; margin: 10px auto 0; font-size: 0.72rem; }
     }
     return out;
   }
-  function mkJourney(keys, t, i, g, n) {
+  function mkJourney(keys, t, i, g, n, a) {
     return {
       k: keys,
       t: (typeof t === "number" && isFinite(t)) ? t : null,
       i: (typeof i === "number" && i >= 1 && i <= 5) ? Math.round(i) : null,
       g: Array.isArray(g) ? g.filter(function (x) { return TAGS.indexOf(x) > -1; }) : [],
-      n: typeof n === "string" ? n.slice(0, 280) : ""
+      n: typeof n === "string" ? n.slice(0, 280) : "",
+      a: (a === "helped" || a === "some" || a === "no" || a === "skip") ? a : null
     };
   }
   (function load() {
@@ -628,7 +1684,7 @@ footer .credit { max-width: 60ch; margin: 10px auto 0; font-size: 0.72rem; }
         saved.journeys.forEach(function (j) {
           if (!j || !Array.isArray(j.k)) return;
           var k = cleanKeys(j.k);
-          if (k.length) tally.journeys.push(mkJourney(k, j.t, j.i, j.g, j.n));
+          if (k.length) tally.journeys.push(mkJourney(k, j.t, j.i, j.g, j.n, j.a));
         });
         tally.closed = !!saved.closed && tally.journeys.length > 0;
       } else {
@@ -708,24 +1764,27 @@ footer .credit { max-width: 60ch; margin: 10px auto 0; font-size: 0.72rem; }
   function updateTools() {
     var cur = current();
     toolsMsg.textContent = cur.st === 0
-      ? (listMode ? "Choose the feeling closest to yours." : "Start in the middle: tap the feeling closest to yours.")
-      : cur.st === 4 ? "Check-in complete."
-      : cur.st === 3 ? (listMode ? "Last step: choose something to try." : "Last step: tap an idea for what to do next.")
-      : (listMode ? "Choose a more specific word." : "Now tap a more specific word in the bright ring.");
+      ? t(listMode ? "Choose the feeling closest to yours." : "Start in the middle: tap the feeling closest to yours.")
+      : cur.st === 4 ? t("Check-in complete.")
+      : cur.st === 3 ? t(listMode ? "Last step: choose something to try." : "Last step: tap an idea for what to do next.")
+      : t(listMode ? "Choose a more specific word." : "Now tap a more specific word in the bright ring.");
+    var zoomed = focus !== null && cur.st >= 1 && !listMode;
+    svg.classList.toggle("zoomed", zoomed);
+    if (zoomed) toolsMsg.textContent += " " + t("Drag the wheel to look around.");
     if (cur.st >= 1 && !listMode) {
       backBtn.style.display = "inline-block";
-      backBtn.textContent = focus !== null ? "Show full wheel" : "Zoom in";
+      backBtn.textContent = focus !== null ? t("Show full wheel") : t("Zoom in");
     } else { backBtn.style.display = "none"; }
     for (var k = 0; k < keyItems.length; k++) { keyItems[k].classList.toggle("now", k === cur.st); keyItems[k].classList.toggle("done", k < cur.st); }
   }
-  function flash(msg) {
+  function flash(msg, long) {
     toolsMsg.textContent = msg;
     clearTimeout(flashTimer);
-    flashTimer = setTimeout(updateTools, msg.indexOf("ring:") > -1 ? 6000 : 2400);
+    flashTimer = setTimeout(updateTools, long ? 6000 : 2400);
   }
   function applyMode() {
     document.body.classList.toggle("listmode", listMode);
-    viewBtn.textContent = listMode ? "Show wheel" : "List view";
+    viewBtn.textContent = listMode ? t("Show wheel") : t("List view");
     updateTools();
   }
   viewBtn.addEventListener("click", function () {
@@ -742,7 +1801,7 @@ footer .credit { max-width: 60ch; margin: 10px auto 0; font-size: 0.72rem; }
     pvRing = pvRing === r ? null : r;
     if (pvRing !== null && focus !== null) unfocus();
     applyView();
-    if (pvRing !== null) { flash(RING_HELP[r]); ensureWheelVisible(); } else updateTools();
+    if (pvRing !== null) { flash(t(RING_HELP[r]), true); ensureWheelVisible(); } else updateTools();
   });
 
   /* ---- wheel highlighting and keyboard access ---- */
@@ -774,17 +1833,17 @@ footer .credit { max-width: 60ch; margin: 10px auto 0; font-size: 0.72rem; }
 
   /* ---- context editor (intensity, tags, note), used in the card and the edit dialog ---- */
   function ctxHTML(j, p) {
-    var h = '<p class="ctxlabel" id="' + p + 'il">How strong is the feeling?</p><div class="int" role="group" aria-labelledby="' + p + 'il">';
+    var h = '<p class="ctxlabel" id="' + p + 'il">' + esc(t("How strong is the feeling?")) + '</p><div class="int" role="group" aria-labelledby="' + p + 'il">';
     for (var v = 1; v <= 5; v++) h += '<button type="button" class="intbtn" data-int="' + v + '" aria-pressed="' + (j.i === v) + '">' + v + "</button>";
-    h += '</div><div class="intscale" aria-hidden="true"><span>Mild</span><span>Intense</span></div>';
-    h += '<p class="ctxlabel">What was it about?</p><div class="chips tags">' +
-      TAGS.map(function (t) { return '<button type="button" class="chip tag" data-tag="' + t + '" aria-pressed="' + (j.g.indexOf(t) > -1) + '">' + t + "</button>"; }).join("") + "</div>";
-    h += '<p class="ctxlabel"><label for="' + p + 'note">Note</label></p><textarea id="' + p + 'note" data-note rows="3" maxlength="280" placeholder="Anything you want to remember (optional)">' + esc(j.n) + "</textarea>";
+    h += '</div><div class="intscale" aria-hidden="true"><span>' + esc(t("Mild")) + '</span><span>' + esc(t("Intense")) + '</span></div>';
+    h += '<p class="ctxlabel">' + esc(t("What was it about?")) + '</p><div class="chips tags">' +
+      TAGS.map(function (t) { return '<button type="button" class="chip tag" data-tag="' + t + '" aria-pressed="' + (j.g.indexOf(t) > -1) + '">' + esc(tagName(t)) + "</button>"; }).join("") + "</div>";
+    h += '<p class="ctxlabel"><label for="' + p + 'note">' + esc(t("Note")) + '</label></p><textarea id="' + p + 'note" data-note rows="3" maxlength="280" placeholder="' + esc(t("Anything you want to remember (optional)")) + '">' + esc(j.n) + "</textarea>";
     return h;
   }
   function ctxBlock(j) {
     if (!j) return "";
-    return '<details class="ctx" id="ctx"' + (ctxOpen ? " open" : "") + '><summary>Add context <span class="opt">optional</span></summary><div class="ctxbody">' + ctxHTML(j, "c") + "</div></details>";
+    return '<details class="ctx" id="ctx"' + (ctxOpen ? " open" : "") + '><summary>' + esc(t("Add context")) + ' <span class="opt">' + esc(t("optional")) + '</span></summary><div class="ctxbody">' + ctxHTML(j, "c") + "</div></details>";
   }
   function syncCtx(root, j) {
     Array.prototype.forEach.call(root.querySelectorAll("[data-int]"), function (b) { b.setAttribute("aria-pressed", String(j.i === +b.dataset.int)); });
@@ -825,32 +1884,36 @@ footer .credit { max-width: 60ch; margin: 10px auto 0; font-size: 0.72rem; }
   function renderCard() {
     var cur = current(), out = "", w = cur.c !== null ? DATA[cur.c] : null;
     if (cur.st === 4) {
-      out += '<span class="badge">Check-in complete</span>' +
+      out += '<span class="badge">' + esc(t("Check-in complete")) + '</span>' +
         (okMsg ? '<p class="okmsg">' + esc(okMsg) + "</p>" : "") +
         '<p class="crumbs">' + esc(crumbText(cur)) + "</p>" +
-        "<h2>All four rings chosen</h2>" +
-        '<p class="lead">Your check-in was added to your tally. Add context if you like, or start a new check-in.</p>' +
+        "<h2>" + esc(t("All four rings chosen")) + "</h2>" +
+        '<p class="lead">' + esc(t("Your check-in was added to your tally. Add context if you like, or start a new check-in.")) + "</p>" +
         ctxBlock(cur.j) +
-        '<button type="button" class="bigbtn" style="margin-top:14px" data-newci="1">Start a new check-in</button>';
+        '<button type="button" class="bigbtn" style="margin-top:14px" data-newci="1">' + esc(t("Start a new check-in")) + "</button>";
       card.innerHTML = out;
       return;
     }
-    out += '<p class="stepno">Step ' + (cur.st + 1) + " of 4 · " + STEP_NAMES[cur.st] + "</p>";
+    out += '<p class="stepno">' + esc(tf("Step {n} of 4", { n: cur.st + 1 })) + " · " + esc(t(STEP_NAMES[cur.st])) + "</p>";
     if (okMsg) out += '<p class="okmsg">' + esc(okMsg) + "</p>";
     if (cur.st >= 1) out += '<p class="crumbs">' + esc(crumbText(cur)) + "</p>";
-    out += "<h2>" + esc(STEP_PROMPT[cur.st]) + "</h2>" +
+    out += "<h2>" + esc(t(STEP_PROMPT[cur.st])) + "</h2>" +
       '<p class="lead">' + (cur.st === 0
-        ? "Pick the one that fits best. You will get more specific in the next steps."
-        : "Tap a word on the wheel, or pick from the list below.") + "</p>";
+        ? t("Pick the one that fits best. You will get more specific in the next steps.")
+        : t("Tap a word on the wheel, or pick from the list below.")) + "</p>";
     var chips = "";
     if (cur.st === 0) chips = DATA.map(function (d, c) { return chip(d.name, c, 0, 0); }).join("");
     else if (cur.st === 1) chips = w.r2.map(function (l, i) { return chip(l, cur.c, 1, i); }).join("");
     else if (cur.st === 2) chips = w.r3.map(function (l, i) { return chip(l, cur.c, 2, i); }).join("");
     else chips = w.r4.map(function (l, i) { return chip(l, cur.c, 3, i); }).join("");
-    out += "<h3>Choose one</h3>" + '<div class="chips">' + chips + "</div>";
+    var defsOn = settings.defs && cur.st < 3;
+    out += chosenDefHTML(cur);
+    out += "<h3>" + esc(t("Choose one")) + "</h3>" + (cur.st < 3 ? defsToggleHTML() : "");
+    out += defsOn ? chipsWithDefs(cur.st === 0 ? DATA.map(function (d) { return d.name; }) : (cur.st === 1 ? w.r2 : w.r3), cur.st === 0 ? 0 : cur.c, cur.st) : '<div class="chips">' + chips + "</div>";
+    out += doneButtonHTML(cur);
     if (cur.st >= 1) {
       out += ctxBlock(cur.j) +
-        '<h3>Changed your mind?</h3><div class="chips"><button type="button" class="chip" style="background:#D6D2E6" data-over="1">Start over</button></div>';
+        "<h3>" + esc(t("Changed your mind?")) + '</h3><div class="chips"><button type="button" class="chip" style="background:#D6D2E6" data-over="1">' + esc(t("Start over")) + "</button></div>";
     }
     card.innerHTML = out;
   }
@@ -870,8 +1933,8 @@ footer .credit { max-width: 60ch; margin: 10px auto 0; font-size: 0.72rem; }
     if (was === 0) tally.journeys.push(mkJourney([key], Date.now()));
     else cur.j.k.push(key);
     tally.closed = false;
-    okMsg = "Added to your tally: " + info.word + " ✓";
-    saveTally();
+    okMsg = tf("Added to your tally: {w} ✓", { w: info.word });
+    saveTally(); haptic();
     if (was === 0) { ctxOpen = false; focusOn(c); }
     renderAll();
     bump();
@@ -892,11 +1955,38 @@ footer .credit { max-width: 60ch; margin: 10px auto 0; font-size: 0.72rem; }
   function activate(g, viaKey) {
     var c = +g.dataset.c, r = +g.dataset.r, i = +g.dataset.i, cur = current();
     if (allowed(c, r, i, cur)) choose(c, r, i, false, viaKey);
-    else flash(cur.st === 4 ? "Press “Start a new check-in” to choose again."
+    else flash(t(cur.st === 4 ? "Press “Start a new check-in” to choose again."
              : cur.st === 0 ? "Start with a center word."
-             : "Choose a word in the lit-up ring.");
+             : "Choose a word in the lit-up ring."));
   }
-  svg.addEventListener("click", function (e) { var g = e.target.closest(".seg"); if (g) activate(g, false); });
+  /* Drag to pan while zoomed in, so every word can be explored */
+  var pan = null, justDragged = false;
+  svg.addEventListener("pointerdown", function (e) {
+    if (focus === null || listMode || (e.pointerType === "mouse" && e.button !== 0)) return;
+    cancelAnimationFrame(anim);
+    pan = { id: e.pointerId, x: e.clientX, y: e.clientY, vb: vb.slice(), moved: false, k: vb[2] / svg.getBoundingClientRect().width };
+  });
+  svg.addEventListener("pointermove", function (e) {
+    if (!pan || e.pointerId !== pan.id) return;
+    var dx = e.clientX - pan.x, dy = e.clientY - pan.y;
+    if (!pan.moved) {
+      if (Math.abs(dx) + Math.abs(dy) < 8) return;
+      pan.moved = true; svg.classList.add("panning");
+      try { svg.setPointerCapture(e.pointerId); } catch (err) {}
+    }
+    var s = pan.vb[2], lim = 505;
+    var x = Math.max(-lim - s / 2, Math.min(lim - s / 2, pan.vb[0] - dx * pan.k));
+    var y = Math.max(-lim - s / 2, Math.min(lim - s / 2, pan.vb[1] - dy * pan.k));
+    setVB([x, y, s, s]);
+  });
+  function endPan(e) {
+    if (!pan || e.pointerId !== pan.id) return;
+    if (pan.moved) { justDragged = true; setTimeout(function () { justDragged = false; }, 60); }
+    svg.classList.remove("panning"); pan = null;
+  }
+  svg.addEventListener("pointerup", endPan);
+  svg.addEventListener("pointercancel", endPan);
+  svg.addEventListener("click", function (e) { if (justDragged) return; var g = e.target.closest(".seg"); if (g) activate(g, false); });
   svg.addEventListener("keydown", function (e) {
     if (e.key !== "Enter" && e.key !== " ") return;
     var g = e.target.closest ? e.target.closest(".seg") : null;
@@ -907,6 +1997,8 @@ footer .credit { max-width: 60ch; margin: 10px auto 0; font-size: 0.72rem; }
     var b = e.target.closest("button");
     if (!b) return;
     if (b.dataset.newci || b.dataset.over) { startNew(); return; }
+    if (b.dataset.done) { finishEarly(); return; }
+    if (b.dataset.defs) { settings.defs = !settings.defs; saveSettings(); renderCard(); return; }
     if (b.dataset.r !== undefined) choose(+b.dataset.c, +b.dataset.r, +b.dataset.i, true, false);
   });
   card.addEventListener("toggle", function (e) { if (e.target && e.target.id === "ctx") ctxOpen = e.target.open; }, true);
@@ -925,17 +2017,17 @@ footer .credit { max-width: 60ch; margin: 10px auto 0; font-size: 0.72rem; }
   function rangeStart() { return range === "today" ? dayStart(0) : range === "7" ? dayStart(6) : range === "30" ? dayStart(29) : 0; }
   function inRange(j) { return range === "all" ? true : (j.t != null && j.t >= rangeStart()); }
   function pad2(n) { return (n < 10 ? "0" : "") + n; }
-  function fmtTime(d) { return d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" }); }
-  function fmtWhen(t) {
-    if (t == null) return "Date not recorded";
-    var d = new Date(t), diff = Math.round((startOfDay(Date.now()) - startOfDay(t)) / 864e5);
-    if (diff === 0) return "Today, " + fmtTime(d);
-    if (diff === 1) return "Yesterday, " + fmtTime(d);
-    return d.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" }) + ", " + fmtTime(d);
+  function fmtTime(d) { return d.toLocaleTimeString(LOCALE, { hour: "numeric", minute: "2-digit" }); }
+  function fmtWhen(ts) {
+    if (ts == null) return t("Date not recorded");
+    var d = new Date(ts), diff = Math.round((startOfDay(Date.now()) - startOfDay(ts)) / 864e5);
+    if (diff === 0) return t("Today") + ", " + fmtTime(d);
+    if (diff === 1) return t("Yesterday") + ", " + fmtTime(d);
+    return d.toLocaleDateString(LOCALE, { weekday: "short", month: "short", day: "numeric" }) + ", " + fmtTime(d);
   }
   function disarm() {
     armed = false; clearTimeout(armTimer);
-    resetBtn.textContent = "Reset"; resetBtn.classList.remove("armed");
+    resetBtn.textContent = t("Reset"); resetBtn.classList.remove("armed");
   }
   function top(map) {
     var best = null;
@@ -952,14 +2044,14 @@ footer .credit { max-width: 60ch; margin: 10px auto 0; font-size: 0.72rem; }
   function renderDash() {
     var all = tally.journeys, F = all.filter(inRange);
     $("barNum").textContent = all.length;
-    $("barLabel").textContent = all.length === 1 ? "check-in" : "check-ins";
+    $("barLabel").textContent = all.length === 1 ? t("check-in") : t("check-ins");
     $("stCheck").textContent = F.length;
     $("stWords").textContent = F.reduce(function (n, j) { return n + j.k.length; }, 0);
     var ints = F.filter(function (j) { return j.i != null; }).map(function (j) { return j.i; });
     $("stInt").textContent = ints.length ? (ints.reduce(function (a, b) { return a + b; }, 0) / ints.length).toFixed(1) : "—";
 
     var lastJn = lastJ(), lastKey = lastJn ? lastJn.k[lastJn.k.length - 1] : null, last = lastKey ? wordFor(lastKey) : null;
-    $("last").textContent = last ? "Last tapped: " + last.word + (last.r === 0 ? "" : " (" + DATA[last.c].name + ")") : "";
+    $("last").textContent = last ? t("Last tapped:") + " " + last.word + (last.r === 0 ? "" : " (" + DATA[last.c].name + ")") : "";
 
     /* summary sentence */
     var fam = {}, feel = {}, tags = {};
@@ -970,9 +2062,9 @@ footer .credit { max-width: 60ch; margin: 10px auto 0; font-size: 0.72rem; }
     });
     var ins = $("insight");
     if (F.length) {
-      var topFam = top(fam), topFeel = top(feel), topTag = top(tags), s = "Mostly <b>" + esc(DATA[+topFam].name) + "</b>, " + fam[topFam] + " of " + F.length + " check-in" + (F.length === 1 ? "" : "s") + ".";
-      if (topFeel) s += " Most common feeling: <b>" + esc(topFeel.split("|")[0]) + "</b>.";
-      if (topTag) s += " Most often about: <b>" + esc(topTag) + "</b>.";
+      var topFam = top(fam), topFeel = top(feel), topTag = top(tags), s = tf("Mostly <b>{f}</b>, {a} of {n} {c}.", { f: esc(DATA[+topFam].name), a: fam[topFam], n: F.length, c: F.length === 1 ? t("check-in") : t("check-ins") });
+      if (topFeel) s += " " + tf("Most common feeling: <b>{f}</b>.", { f: esc(topFeel.split("|")[0]) });
+      if (topTag) s += " " + tf("Most often about: <b>{f}</b>.", { f: esc(tagName(topTag)) });
       ins.innerHTML = s; ins.hidden = false;
     } else { ins.hidden = true; }
 
@@ -989,17 +2081,17 @@ footer .credit { max-width: 60ch; margin: 10px auto 0; font-size: 0.72rem; }
     var maxN = Math.max.apply(null, cols.map(function (c) { return c.n; }).concat([1]));
     var chartEl = $("chart"), show = dated.length > 0;
     $("chartHead").hidden = !show; chartEl.hidden = !show;
-    $("chartHead").textContent = "Check-ins per day, last " + days + " days";
+    $("chartHead").textContent = tf("Check-ins per day, last {n} days", { n: days });
     chartEl.innerHTML = cols.map(function (c, idx) {
       var dt = new Date(c.s), h = c.n ? Math.max(6, Math.round(c.n / maxN * 100)) : 0, isToday = idx === cols.length - 1;
       var segs = c.fam.map(function (n, ci) { return n ? '<i style="flex:' + n + ' 0 0;background:' + DATA[ci].color + '"></i>' : ""; }).join("");
-      var lbl = days === 7 ? dt.toLocaleDateString(undefined, { weekday: "short" }) : ((idx % 5 === 0 || isToday) ? String(dt.getDate()) : "");
+      var lbl = days === 7 ? dt.toLocaleDateString(LOCALE, { weekday: "short" }) : ((idx % 5 === 0 || isToday) ? String(dt.getDate()) : "");
       return '<div class="col">' + (days === 7 ? '<span class="cnt">' + (c.n || "") + "</span>" : "") +
         '<div class="barwrap"><div class="stack" style="height:' + h + 'px">' + segs + "</div></div>" +
         '<span class="lbl' + (isToday ? " today" : "") + '">' + esc(lbl) + "</span></div>";
     }).join("");
-    chartEl.setAttribute("aria-label", "Check-ins per day, last " + days + " days. " + cols.reduce(function (n, c) { return n + c.n; }, 0) + " in total.");
-    $("chartNote").textContent = undated ? undated + " earlier check-in" + (undated === 1 ? " has" : "s have") + " no date, so " + (undated === 1 ? "it appears" : "they appear") + " only under All time." : "";
+    chartEl.setAttribute("aria-label", tf("Check-ins per day, last {n} days", { n: days }) + ". " + tf("{n} in total.", { n: cols.reduce(function (n, c) { return n + c.n; }, 0) }));
+    $("chartNote").textContent = undated ? tf(undated === 1 ? "{n} earlier check-in has no date, so it appears only under All time." : "{n} earlier check-ins have no date, so they appear only under All time.", { n: undated }) : "";
 
     /* breakdowns */
     var coreTotals = DATA.map(function () { return 0; }), counts = {}, feelRows = [], actRows = [];
@@ -1031,10 +2123,10 @@ footer .credit { max-width: 60ch; margin: 10px auto 0; font-size: 0.72rem; }
     var openJ = (!tally.closed && lastJ()) || null;
     $("hist").innerHTML = rows.slice(0, histLimit).map(function (o) {
       var j = o.j, meta = [fmtWhen(j.t)];
-      if (j.i != null) meta.push("Intensity " + j.i + "/5");
-      if (j.g.length) meta.push(j.g.join(", "));
-      if (j === openJ && j.k.length < 4) meta.push("in progress");
-      return '<li><button type="button" class="hrow" data-j="' + o.i + '" aria-label="Edit check-in: ' + esc(pathOf(j)) + '">' +
+      if (j.i != null) meta.push(tf("Intensity {n}/5", { n: j.i }));
+      if (j.g.length) meta.push(j.g.map(tagName).join(", "));
+      if (j === openJ && j.k.length < 4) meta.push(t("in progress"));
+      return '<li><button type="button" class="hrow" data-j="' + o.i + '" aria-label="' + esc(t("Edit check-in:")) + " " + esc(pathOf(j)) + '">' +
         '<span class="dot" style="background:' + DATA[wordFor(j.k[0]).c].color + '"></span><span class="hmain"><span class="hpath">' + esc(pathOf(j)) + "</span>" +
         '<span class="hmeta">' + esc(meta.join(" · ")) + "</span>" +
         (j.n ? '<span class="hnote">“' + esc(j.n.length > 90 ? j.n.slice(0, 90) + "…" : j.n) + "”</span>" : "") +
@@ -1044,8 +2136,9 @@ footer .credit { max-width: 60ch; margin: 10px auto 0; font-size: 0.72rem; }
     $("moreHist").hidden = rows.length <= histLimit;
 
     var em = $("empty");
+    renderPatterns(F, all); renderHelped(all); renderFollow(); renderBackup();
     em.hidden = has;
-    em.textContent = all.length ? "No check-ins in this period. Try a longer range." : "Start with a center word. Every word you tap is added here.";
+    em.textContent = all.length ? t("No check-ins in this period. Try a longer range.") : t("Start with a center word. Every word you tap is added here.");
     undoBtn.disabled = all.length === 0;
     resetBtn.disabled = all.length === 0;
     if (all.length === 0) disarm();
@@ -1082,7 +2175,7 @@ footer .credit { max-width: 60ch; margin: 10px auto 0; font-size: 0.72rem; }
   });
   resetBtn.addEventListener("click", function () {
     if (!armed) {
-      armed = true; resetBtn.textContent = "Tap again to erase all"; resetBtn.classList.add("armed");
+      armed = true; resetBtn.textContent = t("Tap again to erase all"); resetBtn.classList.add("armed");
       armTimer = setTimeout(disarm, 4000);
       return;
     }
@@ -1106,19 +2199,27 @@ footer .credit { max-width: 60ch; margin: 10px auto 0; font-size: 0.72rem; }
   });
 
   var editing = null, delArmed = false;
-  function resetDel() { delArmed = false; $("delBtn").textContent = "Delete check-in"; $("delBtn").classList.remove("danger"); }
+  function resetDel() { delArmed = false; $("delBtn").textContent = t("Delete check-in"); $("delBtn").classList.remove("danger"); }
   function openEdit(idx) {
     var j = tally.journeys[idx];
     if (!j) return;
     editing = j; resetDel();
     $("edTitle").textContent = pathOf(j);
     $("edMeta").textContent = fmtWhen(j.t);
-    $("edCtx").innerHTML = ctxHTML(j, "e");
+    $("edCtx").innerHTML = ctxHTML(j, "e") + followEditHTML(j);
     openDlg($("editDlg"));
   }
   bindCtx($("edCtx"), function () { return editing; }, function () { renderDash(); });
+  $("edCtx").addEventListener("click", function (e) {
+    var b = e.target.closest("button[data-fu]");
+    if (!b || !editing) return;
+    editing.a = (editing.a === b.dataset.fu) ? null : b.dataset.fu;
+    saveTally();
+    Array.prototype.forEach.call($("edCtx").querySelectorAll("[data-fu]"), function (x) { x.setAttribute("aria-pressed", String(editing.a === x.dataset.fu)); });
+    renderDash();
+  });
   $("delBtn").addEventListener("click", function () {
-    if (!delArmed) { delArmed = true; this.textContent = "Tap again to delete"; this.classList.add("danger"); return; }
+    if (!delArmed) { delArmed = true; this.textContent = t("Tap again to delete"); this.classList.add("danger"); return; }
     var idx = tally.journeys.indexOf(editing);
     if (idx > -1) {
       var wasLast = idx === tally.journeys.length - 1;
@@ -1155,7 +2256,7 @@ footer .credit { max-width: 60ch; margin: 10px auto 0; font-size: 0.72rem; }
     return JSON.stringify({
       app: "feelings-wheel", version: 2, exported: new Date().toISOString(),
       journeys: sortedJourneys().map(function (j) {
-        return { t: j.t, keys: j.k, words: j.k.map(function (k) { return wordFor(k).word; }), intensity: j.i, tags: j.g, note: j.n };
+        return { t: j.t, keys: j.k, words: j.k.map(function (k) { return wordFor(k).word; }), intensity: j.i, tags: j.g, note: j.n, followup: j.a };
       })
     }, null, 2);
   }
@@ -1163,7 +2264,7 @@ footer .credit { max-width: 60ch; margin: 10px auto 0; font-size: 0.72rem; }
   function fillExport() {
     $("exportText").value = exportFmt === "csv" ? buildCSV() : buildJSON();
     Array.prototype.forEach.call($("exportDlg").querySelectorAll("[data-fmt]"), function (b) { b.setAttribute("aria-pressed", String(b.dataset.fmt === exportFmt)); });
-    $("exStatus").textContent = tally.journeys.length ? "" : "Nothing to export yet.";
+    $("exStatus").textContent = tally.journeys.length ? "" : t("Nothing to export yet.");
   }
   $("exportBtn").addEventListener("click", function () { fillExport(); openDlg($("exportDlg")); });
   $("exportDlg").addEventListener("click", function (e) {
@@ -1172,38 +2273,585 @@ footer .credit { max-width: 60ch; margin: 10px auto 0; font-size: 0.72rem; }
   });
   $("copyBtn").addEventListener("click", function () {
     var ta = $("exportText"), txt = ta.value;
+    if (exportFmt === "json" && tally.journeys.length) markBackup();
     function fallback() {
       ta.focus(); ta.select();
       var ok = false; try { ok = document.execCommand("copy"); } catch (e) {}
-      $("exStatus").textContent = ok ? "Copied." : "Select the text and copy it manually.";
+      $("exStatus").textContent = ok ? t("Copied.") : t("Select the text and copy it manually.");
     }
-    try { navigator.clipboard.writeText(txt).then(function () { $("exStatus").textContent = "Copied to the clipboard."; }, fallback); }
+    try { navigator.clipboard.writeText(txt).then(function () { $("exStatus").textContent = t("Copied to the clipboard."); }, fallback); }
     catch (e) { fallback(); }
   });
+
+  /* ------------------------------------------------------------------ */
+  /* Reminders                                                           */
+  /* ------------------------------------------------------------------ */
+  var REM_KEY = "fw-remind";
+  var rem = { mode: "off", start: 8, end: 21, time: "09:00", day: 1, inapp: true, seen: 0, snooze: 0 };
+  try { var rs = JSON.parse(lsGet(REM_KEY) || "null"); if (rs && typeof rs === "object") for (var rk in rem) if (rs[rk] !== undefined) rem[rk] = rs[rk]; } catch (e) {}
+  var DAYNAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  var STEPH = { hourly: 1, "3h": 3, "6h": 6 };
+  function remSave() { lsSet(REM_KEY, JSON.stringify(rem)); }
+  function hLabel(h, m) {
+    if (LANG === "es") return h + ":" + pad2(m || 0);
+    var ap = h >= 12 ? "PM" : "AM", hh = h % 12 || 12; return hh + (m ? ":" + pad2(m) : "") + " " + ap;
+  }
+  function dayName(i) { return new Date(2021, 7, 1 + i).toLocaleDateString(LOCALE, { weekday: "long" }); }
+  function timeParts() { var p = String(rem.time).split(":"); return [Math.max(0, Math.min(23, +p[0] || 0)), Math.max(0, Math.min(59, +p[1] || 0))]; }
+  function remSlotsFor(d) {
+    var y = d.getFullYear(), mo = d.getMonth(), da = d.getDate(), out = [];
+    if (STEPH[rem.mode]) { for (var h = rem.start; h <= rem.end; h += STEPH[rem.mode]) out.push(new Date(y, mo, da, h, 0)); }
+    else if (rem.mode === "daily" || (rem.mode === "weekly" && d.getDay() === +rem.day)) { var tp = timeParts(); out.push(new Date(y, mo, da, tp[0], tp[1])); }
+    return out;
+  }
+  function remSummary() {
+    if (rem.mode === "off") return "";
+    if (STEPH[rem.mode]) {
+      var hs = [];
+      for (var h = rem.start; h <= rem.end; h += STEPH[rem.mode]) hs.push(hLabel(h, 0));
+      return tf("You will be reminded at {list}, every day.", { list: hs.length > 1 ? tf("{a} and {b}", { a: hs.slice(0, -1).join(", "), b: hs[hs.length - 1] }) : hs[0] });
+    }
+    var tp = timeParts();
+    return rem.mode === "daily" ? tf("You will be reminded every day at {time}.", { time: hLabel(tp[0], tp[1]) })
+      : tf("You will be reminded every {day} at {time}.", { day: dayName(+rem.day), time: hLabel(tp[0], tp[1]) });
+  }
+  function remLatest(now) {
+    for (var back = 0; back <= 7; back++) {
+      var d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - back);
+      var s = remSlotsFor(d).filter(function (x) { return x <= now; });
+      if (s.length) return s[s.length - 1];
+    }
+    return null;
+  }
+  function remCheck() {
+    var bar = $("remindBar");
+    if (rem.mode === "off" || !rem.inapp || Date.now() < (rem.snooze || 0)) { bar.hidden = true; return; }
+    var latest = remLatest(new Date()), last = 0;
+    tally.journeys.forEach(function (j) { if (typeof j.t === "number" && j.t > last) last = j.t; });
+    bar.hidden = !(latest && latest.getTime() > Math.max(last, rem.seen));
+  }
+  function remRender() {
+    var btns = document.querySelectorAll("#plans button");
+    for (var i = 0; i < btns.length; i++) btns[i].setAttribute("aria-pressed", btns[i].getAttribute("data-m") === rem.mode ? "true" : "false");
+    $("remOpts").hidden = rem.mode === "off";
+    $("rowWake").hidden = !STEPH[rem.mode];
+    $("rowDay").hidden = rem.mode !== "weekly";
+    $("rowTime").hidden = !(rem.mode === "daily" || rem.mode === "weekly");
+    $("remStart").value = rem.start; $("remEnd").value = rem.end; $("remDay").value = rem.day; $("remTime").value = rem.time;
+    $("remInapp").checked = !!rem.inapp;
+    $("remSummary").textContent = remSummary();
+    remCheck();
+  }
+  (function remInit() {
+    var s = $("remStart"), e = $("remEnd"), d = $("remDay"), h;
+    for (h = 5; h <= 23; h++) { s.add(new Option(hLabel(h, 0), h)); e.add(new Option(hLabel(h, 0), h)); }
+    for (h = 0; h < 7; h++) d.add(new Option(dayName(h), h));
+    $("plans").addEventListener("click", function (ev) {
+      var b = ev.target.closest("button"); if (!b) return;
+      rem.mode = b.getAttribute("data-m"); rem.seen = Date.now(); remSave(); remRender();
+    });
+    s.addEventListener("change", function () { rem.start = +s.value; if (rem.end < rem.start) rem.end = rem.start; rem.seen = Date.now(); remSave(); remRender(); });
+    e.addEventListener("change", function () { rem.end = +e.value; if (rem.start > rem.end) rem.start = rem.end; rem.seen = Date.now(); remSave(); remRender(); });
+    d.addEventListener("change", function () { rem.day = +d.value; rem.seen = Date.now(); remSave(); remRender(); });
+    $("remTime").addEventListener("change", function () { if (this.value) { rem.time = this.value; rem.seen = Date.now(); remSave(); remRender(); } });
+    $("remInapp").addEventListener("change", function () { rem.inapp = this.checked; remSave(); remCheck(); });
+    $("rbSnooze").addEventListener("click", function () { rem.snooze = Date.now() + 3600e3; remSave(); remCheck(); });
+    $("rbLater").addEventListener("click", function () { rem.seen = Date.now(); remSave(); remCheck(); });
+    $("rbNow").addEventListener("click", function () {
+      rem.seen = Date.now(); remSave(); remCheck(); stage.scrollIntoView({ behavior: REDUCE ? "auto" : "smooth", block: "start" });
+    });
+    $("toRemind").addEventListener("click", function () {
+      $("remind").scrollIntoView({ behavior: REDUCE ? "auto" : "smooth", block: "start" });
+      $("remTitle").focus({ preventScroll: true });
+    });
+    document.addEventListener("visibilitychange", function () { if (!document.hidden) remCheck(); });
+    setInterval(remCheck, 60000);
+    remRender();
+  })();
+
+
+  /* ------------------------------------------------------------------ */
+  /* Share the app link (never any check-in data)                        */
+  /* ------------------------------------------------------------------ */
+  var SHARE_TEXT = t("Feelings: a simple feelings wheel to help you name what you feel and pick a healthy next step.");
+  function shareUrl() { return location.href.split("#")[0]; }
+  var SHARE_SUBJ = t("Try the Feelings app");
+  var SHARE_APPS = [
+    [t("Text message"), "#2E9E5B", function (t, u) { return "sms:?&body=" + t + "%20" + u; }],
+    [t("Email"), "#4A6FA5", function (t, u) { return "mailto:?subject=" + encodeURIComponent(SHARE_SUBJ) + "&body=" + t + "%0A%0A" + u; }],
+    ["WhatsApp", "#1FA855", function (t, u) { return "https://wa.me/?text=" + t + "%20" + u; }],
+    ["Messenger", "#2F7CF6", function (t, u) { return "fb-messenger://share/?link=" + u; }],
+    ["Telegram", "#2A9AD6", function (t, u) { return "https://t.me/share/url?url=" + u + "&text=" + t; }],
+    ["Snapchat", "#C9A800", function (t, u) { return "https://www.snapchat.com/scan?attachmentUrl=" + u; }],
+    ["X", "#222222", function (t, u) { return "https://twitter.com/intent/tweet?text=" + t + "&url=" + u; }],
+    ["Facebook", "#3B5BA9", function (t, u) { return "https://www.facebook.com/sharer/sharer.php?u=" + u; }],
+    ["Threads", "#333333", function (t, u) { return "https://www.threads.net/intent/post?text=" + t + "%20" + u; }],
+    ["LinkedIn", "#1D6FA8", function (t, u) { return "https://www.linkedin.com/sharing/share-offsite/?url=" + u; }],
+    ["LINE", "#2BA33B", function (t, u) { return "https://line.me/R/msg/text/?" + t + "%20" + u; }],
+    ["Viber", "#7360B0", function (t, u) { return "viber://forward?text=" + t + "%20" + u; }],
+    ["Bluesky", "#2D7FE0", function (t, u) { return "https://bsky.app/intent/compose?text=" + t + "%20" + u; }],
+    ["Reddit", "#D9501E", function (t, u) { return "https://www.reddit.com/submit?url=" + u + "&title=" + t; }],
+    ["Tumblr", "#35465C", function (t, u) { return "https://www.tumblr.com/widgets/share/tool?canonicalUrl=" + u + "&title=" + t; }],
+    ["VK", "#4C75A3", function (t, u) { return "https://vk.com/share.php?url=" + u + "&title=" + t; }],
+    ["Weibo", "#D6402B", function (t, u) { return "https://service.weibo.com/share/share.php?url=" + u + "&title=" + t; }],
+    ["Skype", "#1A8FD0", function (t, u) { return "https://web.skype.com/share?url=" + u + "&text=" + t; }],
+    ["Teams", "#5559B5", function (t, u) { return "https://teams.microsoft.com/share?href=" + u + "&msgText=" + t; }]
+  ];
+  var SHARE_PASTE = [["Instagram", "#C13584"], ["WeChat", "#2AA84A"], ["Signal", "#3A76F0"], ["KakaoTalk", "#B89A00"], ["Discord", "#5865F2"], ["Slack", "#7A3E83"], [t("Any other app"), "#555555"]];
+  function copyText(txt, done) {
+    function fallback() {
+      try { var ta = document.createElement("textarea"); ta.value = txt; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.opacity = "0";
+        document.body.appendChild(ta); ta.select(); var ok = document.execCommand("copy"); ta.remove(); done(ok); } catch (e) { done(false); }
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(function () { done(true); }, fallback); else fallback();
+  }
+  (function shareInit() {
+    var dlg = $("shareDlg"), grid = $("shGrid"), paste = $("shPaste"), status = $("shStatus"), urlBox = $("shUrl");
+    function build() {
+      var u = encodeURIComponent(shareUrl()), t = encodeURIComponent(SHARE_TEXT);
+      grid.innerHTML = SHARE_APPS.map(function (a) {
+        var href = a[2](t, u), web = href.indexOf("http") === 0;
+        return '<a class="shapp" href="' + href + '"' + (web ? ' target="_blank" rel="noopener noreferrer"' : "") + '><i style="background:' + a[1] + '">' + esc(a[0].charAt(0)) + "</i><span>" + esc(a[0]) + "</span></a>";
+      }).join("");
+      paste.innerHTML = SHARE_PASTE.map(function (a) {
+        return '<button type="button" class="shapp" data-paste="' + esc(a[0]) + '"><i style="background:' + a[1] + '">' + esc(a[0].charAt(0)) + "</i><span>" + esc(a[0]) + "</span></button>";
+      }).join("");
+      urlBox.value = shareUrl();
+    }
+    function say(msg) { status.textContent = msg; }
+    $("shareBtn").addEventListener("click", function () { build(); say(""); $("shNative").hidden = !navigator.share; openDlg(dlg); });
+    $("shNative").addEventListener("click", function () {
+      try { navigator.share({ title: "Feelings", text: SHARE_TEXT, url: shareUrl() }).catch(function () {}); } catch (e) { say(t("Sharing from your phone isn't available here. Use the buttons below.")); }
+    });
+    $("shCopy").addEventListener("click", function () {
+      copyText(shareUrl(), function (ok) { say(ok ? t("Link copied.") : t("Couldn't copy automatically. Press and hold the link to copy it.")); if (!ok) { urlBox.focus(); urlBox.select(); } });
+    });
+    paste.addEventListener("click", function (e) {
+      var b = e.target.closest("button[data-paste]"); if (!b) return;
+      copyText(SHARE_TEXT + " " + shareUrl(), function (ok) { say(ok ? tf("Copied. Now open {app} and paste it into a message or post.", { app: b.dataset.paste }) : t("Couldn't copy automatically. Copy the link above instead.")); });
+    });
+    dlg.addEventListener("click", function (e) { if (e.target === dlg || (e.target.closest && e.target.closest("[data-close]"))) closeDlg(dlg); });
+  })();
+
+    /* ------------------------------------------------------------------ */
+  /* Small helpers shared by the features below                          */
+  /* ------------------------------------------------------------------ */
+  function haptic() { if (settings.vibrate && navigator.vibrate) { try { navigator.vibrate(12); } catch (e) {} } }
+  function fmtDay(ts) { return new Date(ts).toLocaleDateString(LOCALE, { month: "short", day: "numeric" }); }
+  function agoText(ts) {
+    var d = Math.round((startOfDay(Date.now()) - startOfDay(ts)) / 864e5);
+    return d <= 0 ? t("today") : d === 1 ? t("yesterday") : tf("{n} days ago", { n: d });
+  }
+  function coreName(c) { return DATA[c].name; }
+  function topKey(map) { var b = null; Object.keys(map).forEach(function (k) { if (b === null || map[k] > map[b]) b = k; }); return b; }
+
+  /* ------------------------------------------------------------------ */
+  /* Finish a check-in early                                             */
+  /* ------------------------------------------------------------------ */
+  function finishEarly() {
+    var cur = current();
+    if (!cur.j || cur.st < 2 || cur.st > 3) return;
+    tally.closed = true; ctxOpen = false;
+    okMsg = tf("Check-in saved: {w} ✓", { w: pathOf(cur.j) });
+    saveTally(); unfocus(); renderAll(); bump(); haptic(); ensureWheelVisible();
+  }
+  function doneButtonHTML(cur) {
+    if (cur.st < 2 || cur.st > 3) return "";
+    return '<button type="button" class="bigbtn alt" data-done="1">' + esc(t("I’m done. Save this check-in")) + "</button>" +
+      '<p class="note donehint">' + esc(t("You can stop here, or keep going for a more specific word.")) + "</p>";
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Word meanings                                                       */
+  /* ------------------------------------------------------------------ */
+  function defsToggleHTML() {
+    return '<button type="button" class="pill defsbtn" data-defs="1" aria-pressed="' + (settings.defs ? "true" : "false") + '">' +
+      esc(settings.defs ? t("Hide meanings") : t("Show meanings")) + "</button>";
+  }
+  function chosenDefHTML(cur) {
+    if (cur.st < 1 || !cur.j || settings.defs) return "";
+    var q = wordFor(cur.j.k[cur.j.k.length - 1]), d = q && defOf(q.c, q.r, q.i);
+    return d ? '<p class="def"><b>' + esc(q.word) + ":</b> " + esc(d) + "</p>" : "";
+  }
+  function chipsWithDefs(list, c, r) {
+    return '<div class="chips defs">' + list.map(function (l, i) {
+      var cc = r === 0 ? i : c, ii = r === 0 ? 0 : i, d = defOf(cc, r, ii);
+      return '<div class="chipitem">' + chip(l, cc, r, ii) + (d ? '<span class="chipdef">' + esc(d) + "</span>" : "") + "</div>";
+    }).join("") + "</div>";
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Backup safety                                                       */
+  /* ------------------------------------------------------------------ */
+  function bkTs() { return +lsGet("fw-backup") || 0; }
+  function markBackup() { lsSet("fw-backup", String(Date.now())); renderBackup(); }
+  function renderBackup() {
+    var ts = bkTs(), n = tally.journeys.length;
+    $("bkLine").textContent = ts ? tf("Last backup: {when}.", { when: agoText(ts) }) : t("You have not backed up yet.");
+    var old = !ts || (Date.now() - ts) > 14 * 864e5, snooze = +lsGet("fw-bk-snooze") || 0;
+    var show = n >= 5 && old && Date.now() > snooze;
+    $("backupBar").hidden = !show;
+    if (show) $("bkText").textContent = ts
+      ? tf("Your last backup was {when}. Back up your {n} check-ins so they are not lost.", { when: agoText(ts), n: n })
+      : tf("Your {n} check-ins are saved only on this phone. Back them up so they are not lost.", { n: n });
+  }
+  function openBackup() { exportFmt = "json"; fillExport(); openDlg($("exportDlg")); }
+  $("bkNow").addEventListener("click", openBackup);
+  $("bkBarNow").addEventListener("click", openBackup);
+  $("bkBarLater").addEventListener("click", function () { lsSet("fw-bk-snooze", String(Date.now() + 3 * 864e5)); renderBackup(); });
+  $("exportDlg").addEventListener("close", renderBackup);
+
+  /* ------------------------------------------------------------------ */
+  /* Patterns: streaks, days of the week, time of day                    */
+  /* ------------------------------------------------------------------ */
+  function streaks(all) {
+    var days = {}, keys = [];
+    all.forEach(function (j) { if (j.t != null) { var s = startOfDay(j.t); if (!days[s]) { days[s] = 1; keys.push(s); } } });
+    keys.sort(function (a, b) { return a - b; });
+    var best = 0, run = 0, prev = null;
+    keys.forEach(function (s) {
+      run = (prev !== null && Math.round((s - prev) / 864e5) === 1) ? run + 1 : 1;
+      if (run > best) best = run; prev = s;
+    });
+    function prevDay(s) { var x = new Date(s); x.setDate(x.getDate() - 1); x.setHours(0, 0, 0, 0); return x.getTime(); }
+    var cur = 0, d = startOfDay(Date.now());
+    if (!days[d]) d = prevDay(d);
+    while (days[d]) { cur++; d = prevDay(d); }
+    return { cur: cur, best: best };
+  }
+  var TOD = [["Morning", 5, 11], ["Afternoon", 12, 16], ["Evening", 17, 21], ["Night", 22, 4]];
+  function todOf(h) { for (var i = 0; i < 3; i++) if (h >= TOD[i][1] && h <= TOD[i][2]) return i; return 3; }
+  function patternRow(label, n, fam, mostly) {
+    var top = fam ? topKey(fam) : null;
+    return '<li><span class="dot" style="background:' + (top !== null ? DATA[+top].color : "var(--line)") + '"></span><span class="grow"><span class="w">' + esc(label) +
+      '</span> <span class="core">' + (top !== null && n ? esc(tf("mostly {f}", { f: coreName(+top) })) : "") + '</span></span><span class="n">' + n + "</span></li>";
+  }
+  function renderPatterns(F, all) {
+    var st = streaks(all), el = $("patterns"), h = "";
+    h += '<p class="streak"><b>' + st.cur + "</b> " + esc(plural(st.cur, t("day in a row"), t("days in a row"))) + " · " + esc(tf("Best: {n}", { n: st.best })) + "</p>";
+    if (!st.cur && all.length) h += '<p class="note">' + esc(t("Missing a day is okay. Pick it up again whenever you like.")) + "</p>";
+    var dated = F.filter(function (j) { return j.t != null; });
+    if (dated.length < 5) {
+      h += '<p class="note">' + esc(t("Patterns by day and time appear after about 5 check-ins in this period.")) + "</p>";
+    } else {
+      var wd = [], wf = [], td = [], tfam = [], i;
+      for (i = 0; i < 7; i++) { wd.push(0); wf.push({}); }
+      for (i = 0; i < 4; i++) { td.push(0); tfam.push({}); }
+      dated.forEach(function (j) {
+        var d = new Date(j.t), c = wordFor(j.k[0]).c, g = todOf(d.getHours());
+        wd[d.getDay()]++; wf[d.getDay()][c] = (wf[d.getDay()][c] || 0) + 1;
+        td[g]++; tfam[g][c] = (tfam[g][c] || 0) + 1;
+      });
+      h += "<h4>" + esc(t("By day of the week")) + '</h4><ol class="toplist">';
+      for (i = 0; i < 7; i++) h += patternRow(new Date(2021, 7, 1 + i).toLocaleDateString(LOCALE, { weekday: "long" }), wd[i], wf[i]);
+      h += "</ol><h4>" + esc(t("By time of day")) + '</h4><ol class="toplist">';
+      for (i = 0; i < 4; i++) h += patternRow(t(TOD[i][0]) + " (" + hourName(TOD[i][1]) + "–" + hourName((TOD[i][2] + 1) % 24) + ")", td[i], tfam[i]);
+      h += "</ol>";
+    }
+    el.innerHTML = h;
+  }
+  function hourName(h) { var ap = h >= 12 ? "PM" : "AM", hh = h % 12 || 12; return LANG === "es" ? String(h) + ":00" : hh + " " + ap; }
+
+  /* ------------------------------------------------------------------ */
+  /* Did the action help? (follow-through)                               */
+  /* ------------------------------------------------------------------ */
+  var FU = [["helped", "It helped"], ["some", "A little"], ["no", "Not really"], ["skip", "Didn’t try it"]];
+  function pendingFollow() {
+    var now = Date.now(), best = null;
+    tally.journeys.forEach(function (j) {
+      if (j.k.length === 4 && j.a == null && j.t != null && now - j.t >= 3600e3 && now - j.t <= 3 * 864e5) { if (!best || j.t > best.t) best = j; }
+    });
+    return best;
+  }
+  function renderFollow() {
+    var j = pendingFollow(), bar = $("followBar");
+    bar.hidden = !j;
+    if (j) $("fuText").textContent = tf("You chose “{w}”. Did it help?", { w: wordFor(j.k[3]).word });
+  }
+  $("followBar").addEventListener("click", function (e) {
+    var b = e.target.closest("button[data-fu]"), j = pendingFollow();
+    if (!b || !j) return;
+    j.a = b.dataset.fu; saveTally(); renderFollow(); renderDash();
+  });
+  function followEditHTML(j) {
+    if (j.k.length !== 4) return "";
+    return '<p class="ctxlabel">' + esc(tf("Did “{w}” help?", { w: wordFor(j.k[3]).word })) + '</p><div class="chips tags" id="fuEdit">' +
+      FU.map(function (o) { return '<button type="button" class="chip tag" data-fu="' + o[0] + '" aria-pressed="' + (j.a === o[0]) + '">' + esc(t(o[1])) + "</button>"; }).join("") + "</div>";
+  }
+  function renderHelped(all) {
+    var m = {};
+    all.forEach(function (j) {
+      if (j.k.length === 4 && (j.a === "helped" || j.a === "some" || j.a === "no")) {
+        var w = wordFor(j.k[3]), o = m[j.k[3]] || (m[j.k[3]] = { word: w.word, c: w.c, n: 0, h: 0 });
+        o.n++; if (j.a !== "no") o.h++;
+      }
+    });
+    var rows = Object.keys(m).map(function (k) { return m[k]; }).sort(function (a, b) { return (b.h / b.n) - (a.h / a.n) || b.n - a.n; });
+    $("helpHead").hidden = !rows.length; $("helped").hidden = !rows.length;
+    $("helped").innerHTML = rows.slice(0, 6).map(function (o) {
+      return '<li><span class="dot" style="background:' + DATA[o.c].color + '"></span><span class="grow"><span class="w">' + esc(o.word) + '</span> <span class="core">' +
+        esc(tf("helped {h} of {n}", { h: o.h, n: o.n })) + '</span></span><span class="n">' + o.h + "/" + o.n + "</span></li>";
+    }).join("");
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Summary you can share (text only, notes left out unless chosen)     */
+  /* ------------------------------------------------------------------ */
+  var sumRange = "7";
+  function buildSummary() {
+    var inc = $("sumNotes").checked, now = Date.now();
+    var start = sumRange === "7" ? dayStart(6) : sumRange === "30" ? dayStart(29) : 0;
+    var F = sortedJourneys().filter(function (j) { return sumRange === "all" ? true : (j.t != null && j.t >= start); });
+    var L = [], dated = F.filter(function (j) { return j.t != null; });
+    var span = sumRange === "all" ? t("All time") : fmtDay(start) + " – " + fmtDay(now);
+    L.push(t("Feelings summary") + " (" + span + ")");
+    L.push("");
+    L.push(tf("Check-ins: {n}", { n: F.length }));
+    if (!F.length) { L.push(t("No check-ins in this period.")); return L.join("\n"); }
+    var ints = F.filter(function (j) { return j.i != null; }).map(function (j) { return j.i; });
+    if (ints.length) L.push(tf("Average intensity: {v} out of 5", { v: (ints.reduce(function (a, b) { return a + b; }, 0) / ints.length).toFixed(1) }));
+    var fam = {}, feel = {}, tags = {}, acts = {}, fuHelp = {};
+    F.forEach(function (j) {
+      var c = wordFor(j.k[0]).c; fam[c] = (fam[c] || 0) + 1;
+      var deep = wordFor(j.k[Math.min(2, j.k.length - 1)]); if (deep.r >= 1) feel[deep.word] = (feel[deep.word] || 0) + 1;
+      j.g.forEach(function (g) { tags[g] = (tags[g] || 0) + 1; });
+      if (j.k.length === 4) {
+        var a = wordFor(j.k[3]).word; acts[a] = (acts[a] || 0) + 1;
+        if (j.a === "helped" || j.a === "some" || j.a === "no") { var o = fuHelp[a] || (fuHelp[a] = [0, 0]); o[1]++; if (j.a !== "no") o[0]++; }
+      }
+    });
+    function listTop(map, n, nameFn) {
+      return Object.keys(map).sort(function (a, b) { return map[b] - map[a]; }).slice(0, n).map(function (k) { return (nameFn ? nameFn(k) : k) + " (" + map[k] + ")"; }).join(", ");
+    }
+    L.push("");
+    L.push(t("Main feelings") + ": " + listTop(fam, 4, function (k) { return coreName(+k); }));
+    if (Object.keys(feel).length) L.push(t("Most common specific feelings") + ": " + listTop(feel, 6));
+    if (Object.keys(tags).length) L.push(t("Most often about") + ": " + listTop(tags, 4, function (k) { return t(k); }));
+    if (dated.length >= 5) {
+      var wd = {}, td = {};
+      dated.forEach(function (j) { var d = new Date(j.t), c = wordFor(j.k[0]).c; (wd[d.getDay()] = wd[d.getDay()] || {})[c] = ((wd[d.getDay()] || {})[c] || 0) + 1; var g = todOf(d.getHours()); (td[g] = td[g] || {})[c] = ((td[g] || {})[c] || 0) + 1; });
+      var cnt = {}; dated.forEach(function (j) { var d = new Date(j.t).getDay(); cnt[d] = (cnt[d] || 0) + 1; });
+      var bd = topKey(cnt);
+      L.push(tf("Busiest day: {d}", { d: new Date(2021, 7, 1 + +bd).toLocaleDateString(LOCALE, { weekday: "long" }) }));
+      var tc = {}; dated.forEach(function (j) { var g = todOf(new Date(j.t).getHours()); tc[g] = (tc[g] || 0) + 1; });
+      var bt = topKey(tc); L.push(tf("Most check-ins happen in the {p}", { p: t(TOD[+bt][0]).toLowerCase() }));
+    }
+    if (Object.keys(acts).length) {
+      L.push(""); L.push(t("Actions chosen") + ": " + listTop(acts, 5));
+      var hk = Object.keys(fuHelp);
+      if (hk.length) L.push(t("Did the action help?") + " " + hk.map(function (k) { return k + " " + fuHelp[k][0] + "/" + fuHelp[k][1]; }).join(", "));
+    }
+    if (inc) {
+      var nn = F.filter(function (j) { return j.n; });
+      if (nn.length) { L.push(""); L.push(t("Notes") + ":"); nn.forEach(function (j) { L.push("- " + (j.t != null ? fmtDay(j.t) + ": " : "") + j.n); }); }
+    }
+    L.push(""); L.push(t("Made with the Feelings app. This is a personal record, not a diagnosis or medical advice."));
+    return L.join("\n");
+  }
+  function fillSummary() {
+    $("sumText").value = buildSummary();
+    Array.prototype.forEach.call($("sumDlg").querySelectorAll("[data-sr]"), function (b) { b.setAttribute("aria-pressed", String(b.dataset.sr === sumRange)); });
+    $("sumStatus").textContent = "";
+  }
+  $("sumBtn").addEventListener("click", function () { $("sumShare").hidden = !navigator.share; fillSummary(); openDlg($("sumDlg")); });
+  $("sumDlg").addEventListener("click", function (e) {
+    var b = e.target.closest ? e.target.closest("[data-sr]") : null;
+    if (b) { sumRange = b.dataset.sr; fillSummary(); }
+    if (e.target === $("sumDlg") || (e.target.closest && e.target.closest("[data-close]"))) closeDlg($("sumDlg"));
+  });
+  $("sumNotes").addEventListener("change", fillSummary);
+  $("sumCopy").addEventListener("click", function () {
+    copyText($("sumText").value, function (ok) { $("sumStatus").textContent = ok ? t("Copied.") : t("Select the text and copy it manually."); });
+  });
+  $("sumShare").addEventListener("click", function () {
+    try { navigator.share({ title: t("Feelings summary"), text: $("sumText").value }).catch(function () {}); } catch (e) {}
+  });
+
+  /* ------------------------------------------------------------------ */
+  /* Settings                                                            */
+  /* ------------------------------------------------------------------ */
+  var COUNTRIES = {
+    US: ["United States", "Call or text 988 (Suicide & Crisis Lifeline)", "988"],
+    CA: ["Canada", "Call or text 988 (Suicide Crisis Helpline)", "988"],
+    GB: ["United Kingdom", "Samaritans: call 116 123", "116123"],
+    IE: ["Ireland", "Samaritans: call 116 123", "116123"],
+    AU: ["Australia", "Lifeline: call 13 11 14", "131114"],
+    NZ: ["New Zealand", "Call or text 1737", "1737"],
+    ES: ["Spain", "Call 024", "024"],
+    MX: ["Mexico", "Línea de la Vida: 800 911 2000", "8009112000"],
+    IN: ["India", "Tele-MANAS: call 14416", "14416"],
+    XX: ["Another country", "Find a helpline for your country at findahelpline.com. If you may be in immediate danger, call your local emergency number.", ""]
+  };
+  function guessCountry() {
+    var m = /-([a-z]{2})\b/i.exec(NAVLANG), c = m ? m[1].toUpperCase() : "";
+    return COUNTRIES[c] ? c : (NAVLANG.indexOf("es") === 0 ? "ES" : "US");
+  }
+  function renderHelpline() {
+    var c = COUNTRIES[settings.country] ? settings.country : guessCountry(), e = COUNTRIES[c];
+    var h = esc(t("If you are struggling or in crisis:")) + " ";
+    h += e[2] ? '<a href="tel:' + e[2] + '">' + esc(t(e[1])) + "</a>." : esc(t(e[1]));
+    h += " " + esc(t("More countries:")) + ' <a href="https://findahelpline.com" target="_blank" rel="noopener noreferrer">findahelpline.com</a>';
+    $("helpline").innerHTML = h;
+  }
+  function renderSettings() {
+    Array.prototype.forEach.call($("setDlg").querySelectorAll("[data-ts]"), function (b) { b.setAttribute("aria-pressed", String(+b.dataset.ts === +settings.text)); });
+    $("setHc").checked = !!settings.hc; $("setMotion").checked = settings.motion === false; $("setVibe").checked = !!settings.vibrate;
+    $("setVibeRow").hidden = !navigator.vibrate;
+    $("setLang").value = LANG; $("setCountry").value = COUNTRIES[settings.country] ? settings.country : guessCountry();
+    var has = !!pinData();
+    $("pinOff").hidden = !has; $("pinOn").hidden = has;
+    $("pinState").textContent = has ? t("PIN lock is on.") : t("PIN lock is off.");
+    $("pinMsg").textContent = "";
+  }
+  (function settingsInit() {
+    var cs = $("setCountry");
+    Object.keys(COUNTRIES).forEach(function (k) { cs.add(new Option(t(COUNTRIES[k][0]), k)); });
+    $("setBtn").addEventListener("click", function () { renderSettings(); openDlg($("setDlg")); });
+    $("setDlg").addEventListener("click", function (e) {
+      if (e.target === $("setDlg") || (e.target.closest && e.target.closest("[data-close]"))) { closeDlg($("setDlg")); return; }
+      var b = e.target.closest ? e.target.closest("[data-ts]") : null;
+      if (b) { settings.text = +b.dataset.ts; document.documentElement.style.fontSize = settings.text + "%"; saveSettings(); renderSettings(); }
+    });
+    $("setHc").addEventListener("change", function () { settings.hc = this.checked; document.documentElement.classList.toggle("hc", settings.hc); saveSettings(); });
+    $("setMotion").addEventListener("change", function () {
+      settings.motion = !this.checked; REDUCE = window.matchMedia("(prefers-reduced-motion: reduce)").matches || settings.motion === false;
+      document.documentElement.classList.toggle("nomotion", settings.motion === false); saveSettings();
+    });
+    $("setVibe").addEventListener("change", function () { settings.vibrate = this.checked; saveSettings(); haptic(); });
+    $("setCountry").addEventListener("change", function () { settings.country = this.value; saveSettings(); renderHelpline(); });
+    $("setLang").addEventListener("change", function () { settings.lang = this.value; saveSettings(); location.reload(); });
+    $("setTour").addEventListener("click", function () { closeDlg($("setDlg")); startTour(true); });
+  })();
+
+  /* ---- PIN lock: keeps casual snoopers out. It does not encrypt the data. ---- */
+  var PIN_KEY = "fw-pin", hiddenAt = 0, pinFails = 0, pinBlockUntil = 0;
+  function pinData() { try { return JSON.parse(lsGet(PIN_KEY) || "null"); } catch (e) { return null; } }
+  function hashPin(pin, salt) {
+    var s = salt + ":" + pin;
+    if (window.crypto && crypto.subtle && window.TextEncoder) {
+      return crypto.subtle.digest("SHA-256", new TextEncoder().encode(s)).then(function (b) {
+        return Array.prototype.map.call(new Uint8Array(b), function (x) { return ("0" + x.toString(16)).slice(-2); }).join("");
+      });
+    }
+    var h = 5381; for (var i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0;
+    return Promise.resolve("f" + (h >>> 0).toString(16));
+  }
+  function lockNow() {
+    if (!pinData()) return;
+    document.body.classList.add("locked"); $("lock").hidden = false; $("lockPin").value = ""; $("lockMsg").textContent = "";
+    try { document.querySelectorAll("dialog[open]").forEach(function (d) { closeDlg(d); }); } catch (e) {}
+    setTimeout(function () { try { $("lockPin").focus(); } catch (e) {} }, 50);
+  }
+  function unlockUI() { document.body.classList.remove("locked"); $("lock").hidden = true; }
+  $("lockForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var pd = pinData(); if (!pd) { unlockUI(); return; }
+    if (Date.now() < pinBlockUntil) { $("lockMsg").textContent = t("Too many tries. Please wait a moment."); return; }
+    hashPin($("lockPin").value, pd.salt).then(function (h) {
+      if (h === pd.hash) { pinFails = 0; unlockUI(); }
+      else { pinFails++; $("lockPin").value = ""; if (pinFails >= 5) { pinBlockUntil = Date.now() + 30000; pinFails = 0; $("lockMsg").textContent = t("Too many tries. Please wait a moment."); } else $("lockMsg").textContent = t("That PIN is not right."); }
+    });
+  });
+  var wipeArmed = false;
+  $("lockWipe").addEventListener("click", function () {
+    if (!wipeArmed) { wipeArmed = true; this.textContent = t("Tap again to erase everything and unlock"); return; }
+    try { Object.keys(localStorage).filter(function (k) { return k.indexOf("fw-") === 0 || k.indexOf("feelings-wheel") === 0; }).forEach(function (k) { localStorage.removeItem(k); }); } catch (e) {}
+    location.reload();
+  });
+  $("pinOn").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var v = $("pinNew").value.trim();
+    if (!/^\d{4,6}$/.test(v)) { $("pinMsg").textContent = t("Use 4 to 6 digits."); return; }
+    var salt = String(Math.random()).slice(2) + Date.now();
+    hashPin(v, salt).then(function (h) { lsSet(PIN_KEY, JSON.stringify({ salt: salt, hash: h })); $("pinNew").value = ""; renderSettings(); $("pinMsg").textContent = t("PIN lock turned on."); });
+  });
+  $("pinOff").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var pd = pinData(); if (!pd) { renderSettings(); return; }
+    hashPin($("pinCur").value, pd.salt).then(function (h) {
+      if (h === pd.hash) { try { localStorage.removeItem(PIN_KEY); } catch (er) {} $("pinCur").value = ""; renderSettings(); $("pinMsg").textContent = t("PIN lock turned off."); }
+      else $("pinMsg").textContent = t("That PIN is not right.");
+    });
+  });
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) hiddenAt = Date.now();
+    else if (pinData() && hiddenAt && Date.now() - hiddenAt > 60000) lockNow();
+  });
+
+  /* ------------------------------------------------------------------ */
+  /* First-run walkthrough                                               */
+  /* ------------------------------------------------------------------ */
+  var TOUR = [
+    ["Welcome to Feelings", "Name what you feel in a few quick taps, then pick a healthy next step. No account needed."],
+    ["Start in the middle", "Tap a core feeling at the center of the wheel. Each step moves one ring outward and gets more specific. You can tap “I’m done” any time after step 2."],
+    ["Make it a habit", "Set a reminder, look for patterns in your tally, and back up your history now and then. Check-ins are saved on this phone."]
+  ];
+  var tourIdx = 0;
+  function renderTour() {
+    $("tourTitle").textContent = t(TOUR[tourIdx][0]); $("tourBody").textContent = t(TOUR[tourIdx][1]);
+    $("tourDots").innerHTML = TOUR.map(function (_, i) { return '<i class="' + (i === tourIdx ? "on" : "") + '"></i>'; }).join("");
+    $("tourBack").hidden = tourIdx === 0;
+    $("tourNext").textContent = tourIdx === TOUR.length - 1 ? t("Get started") : t("Next");
+  }
+  function endTour() { lsSet("fw-tour-v1", "1"); lsSet("fw-hint-v3", "1"); $("hint").style.display = "none"; closeDlg($("tourDlg")); }
+  function startTour(force) {
+    if (!force && lsGet("fw-tour-v1") === "1") return;
+    tourIdx = 0; renderTour(); openDlg($("tourDlg"));
+  }
+  $("tourNext").addEventListener("click", function () { if (tourIdx >= TOUR.length - 1) endTour(); else { tourIdx++; renderTour(); } });
+  $("tourBack").addEventListener("click", function () { if (tourIdx > 0) { tourIdx--; renderTour(); } });
+  $("tourSkip").addEventListener("click", endTour);
+  $("tourDlg").addEventListener("cancel", function () { lsSet("fw-tour-v1", "1"); });
+
   /*DL_START*/
   var dl = $("dlBtn");
   if (dl) dl.addEventListener("click", function () {
+    if (exportFmt === "json" && tally.journeys.length) markBackup();
     try {
       var d = new Date(), name = "feelings-checkins-" + d.getFullYear() + pad2(d.getMonth() + 1) + pad2(d.getDate()) + "." + exportFmt;
       var url = URL.createObjectURL(new Blob([$("exportText").value], { type: exportFmt === "csv" ? "text/csv" : "application/json" }));
       var a = document.createElement("a"); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
       setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
-      $("exStatus").textContent = "Download started. If nothing happens, use Copy instead.";
-    } catch (e) { $("exStatus").textContent = "Download isn't available here. Use Copy instead."; }
+      $("exStatus").textContent = t("Download started. If nothing happens, use Copy instead.");
+    } catch (e) { $("exStatus").textContent = t("Download isn't available here. Use Copy instead."); }
+  });
+
+  var ics = $("icsBtn");
+  if (ics) ics.addEventListener("click", function () {
+    try {
+      var now = new Date(), stamp = now.getFullYear() + pad2(now.getMonth() + 1) + pad2(now.getDate()) + "T" + pad2(now.getHours()) + pad2(now.getMinutes()) + "00";
+      function ld(dt) { return dt.getFullYear() + pad2(dt.getMonth() + 1) + pad2(dt.getDate()) + "T" + pad2(dt.getHours()) + pad2(dt.getMinutes()) + "00"; }
+      var slots = [], rule = "FREQ=DAILY", start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      if (rem.mode === "weekly") { while (start.getDay() !== +rem.day) start.setDate(start.getDate() + 1); rule = "FREQ=WEEKLY;BYDAY=" + ["SU", "MO", "TU", "WE", "TH", "FR", "SA"][+rem.day]; }
+      if (rem.mode === "off") return;
+      var base = remSlotsFor(rem.mode === "weekly" ? start : now);
+      base.forEach(function (x) { slots.push(new Date(start.getFullYear(), start.getMonth(), start.getDate(), x.getHours(), x.getMinutes())); });
+      var L = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Feelings//Check-in reminders//EN", "CALSCALE:GREGORIAN"];
+      slots.forEach(function (sl, i) {
+        var end = new Date(sl.getTime() + 15 * 60000);
+        L.push("BEGIN:VEVENT", "UID:feelings-" + stamp + "-" + i + "@feelings-app", "DTSTAMP:" + stamp, "DTSTART:" + ld(sl), "DTEND:" + ld(end),
+          "RRULE:" + rule, "SUMMARY:" + t("Feelings check-in"), "DESCRIPTION:" + t("Take a minute to name how you feel. Open the Feelings app."),
+          "BEGIN:VALARM", "ACTION:DISPLAY", "DESCRIPTION:" + t("Feelings check-in"), "TRIGGER:PT0S", "END:VALARM", "END:VEVENT");
+      });
+      L.push("END:VCALENDAR");
+      var url = URL.createObjectURL(new Blob([L.join("\r\n") + "\r\n"], { type: "text/calendar" }));
+      var a = document.createElement("a"); a.href = url; a.download = "feelings-reminders.ics"; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
+    } catch (e) {}
   });
   /*DL_END*/
 
   function importFrom(txt) {
     var data;
-    try { data = JSON.parse(txt); } catch (e) { return { err: "That isn't a Feelings backup. Export as JSON backup, then import that." }; }
+    try { data = JSON.parse(txt); } catch (e) { return { err: t("That isn't a Feelings backup. Export as JSON backup, then import that.") }; }
     var list = data && Array.isArray(data.journeys) ? data.journeys : null;
-    if (!list) return { err: "No check-ins found in that backup." };
+    if (!list) return { err: t("No check-ins found in that backup.") };
     var have = {}, added = 0, skipped = 0;
     tally.journeys.forEach(function (j) { have[j.t + "|" + j.k.join(",")] = 1; });
     list.forEach(function (x) {
       var k = x && Array.isArray(x.keys) ? cleanKeys(x.keys) : [];
       if (!k.length) { skipped++; return; }
-      var j = mkJourney(k, x.t, x.intensity, x.tags, x.note), id = j.t + "|" + j.k.join(",");
+      var j = mkJourney(k, x.t, x.intensity, x.tags, x.note, x.followup), id = j.t + "|" + j.k.join(",");
       if (have[id]) { skipped++; return; }
       have[id] = 1; tally.journeys.push(j); added++;
     });
@@ -1220,23 +2868,27 @@ footer .credit { max-width: 60ch; margin: 10px auto 0; font-size: 0.72rem; }
   });
   $("doImport").addEventListener("click", function () {
     var txt = $("importText").value.trim();
-    if (!txt) { $("imStatus").textContent = "Choose a file or paste a backup first."; return; }
+    if (!txt) { $("imStatus").textContent = t("Choose a file or paste a backup first."); return; }
     var res = importFrom(txt);
     if (res.err) { $("imStatus").textContent = res.err; return; }
-    $("imStatus").textContent = "Imported " + res.added + " check-in" + (res.added === 1 ? "" : "s") + (res.skipped ? ", skipped " + res.skipped + " already here" : "") + ".";
+    $("imStatus").textContent = tf(res.added === 1 ? "Imported {n} check-in" : "Imported {n} check-ins", { n: res.added }) + (res.skipped ? ", " + tf("skipped {n} already here", { n: res.skipped }) : "") + ".";
     if (res.added) { okMsg = ""; unfocus(); renderAll(); }
   });
 
   /* ------------------------------------------------------------------ */
   /* Start up                                                            */
   /* ------------------------------------------------------------------ */
+  translateStatic();
   applyMode();
   (function () {                                    // resume a check-in in progress after a reload
     var cur = current();
     if (cur.st >= 1) { focus = cur.c; setVB(wedgeBox(cur.c)); }
   })();
   
+  renderHelpline();
   renderAll();
+  lockNow();
+  if (!pinData()) setTimeout(function () { startTour(false); }, 400);
 })();
 
 </script>
