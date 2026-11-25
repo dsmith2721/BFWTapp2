@@ -21,6 +21,8 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,400..700,0..100&display=swap">
 <style>
 /* Layout: one calm column (820px max). A navy header and sticky tally bar in the icon's deep navy, then the wheel, the step card and the tally dashboard stacked beneath. */
 :root {
@@ -542,6 +544,10 @@ html.nowheel #stage, html.nowheel .prog { display: none !important; }
 .lpt span { font-size: 0.86rem; line-height: 1.4; color: var(--muted); }
 .lpt u { font-size: 0.78rem; color: var(--focus); text-decoration-color: color-mix(in srgb, var(--focus) 50%, transparent); overflow-wrap: anywhere; }
 
+/* Ember-style serif name and tagline */
+header h1, header .tag { font-family: "Fraunces","Iowan Old Style",Georgia,serif; }
+header h1 { font-weight: 650; letter-spacing: -.01em; }
+
 </style>
 </head>
 <body>
@@ -549,7 +555,7 @@ html.nowheel #stage, html.nowheel .prog { display: none !important; }
   <img id="hdrIcon" src="icon-192.png" alt="" width="40" height="40">
   <div class="grow">
     <h1>Feelwell <span class="beta">(beta)</span></h1>
-    <p class="tag">Find your word. Then make a move.</p>
+    <p class="tag">Name it. Face it. Move on.</p>
     <p id="hdrCount"><strong id="barNum">0</strong> <span id="barLabel">check-ins</span></p>
   </div>
   <button id="helpBtn" type="button" aria-label="Show the tutorial" title="Show the tutorial"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7"/><circle cx="12" cy="17" r=".6" fill="currentColor"/></svg></button>
@@ -935,7 +941,7 @@ html.nowheel #stage, html.nowheel .prog { display: none !important; }
 
   var ES = {}, ES_WORDS = {}, DEFS_ES = {}, BDEFS_ES = {};
     ES = {
-"Find your word. Then make a move.": "Encuentra tu palabra. Luego da el paso.",
+"Name it. Face it. Move on.": "Nómbralo. Enfréntalo. Sigue adelante.",
 "Share": "Compartir",
 "Data": "Datos",
 "Wheel": "Rueda",
